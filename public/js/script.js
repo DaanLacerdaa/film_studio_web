@@ -275,12 +275,37 @@ function configurarConfirmacaoExclusao() {
   });
 }
 
-// Exemplo de filtro por tipo
 async function filtrarPessoas(tipo) {
-  const response = await fetch(`/pessoas?tipo=${tipo}`);
-  const pessoas = await response.json();
-  // Atualizar a interface
+  try {
+    const response = await fetch(`/pessoas?tipo=${tipo}`);
+    if (!response.ok) throw new Error("Erro ao buscar dados");
+
+    const data = await response.json();
+    
+    // Atualiza a interface (exemplo: lista de pessoas)
+    const listaPessoas = document.getElementById("lista-pessoas");
+    if (!listaPessoas) return;
+
+    listaPessoas.innerHTML = "";
+    data.forEach((pessoa) => {
+      const item = document.createElement("li");
+      item.textContent = pessoa.nome;
+      listaPessoas.appendChild(item);
+    });
+  } catch (error) {
+    console.error("Erro ao carregar pessoas:", error);
+  }
 }
+
+// Adiciona eventos aos botões de filtro (se existirem)
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".botao-filtro").forEach((button) => {
+    button.addEventListener("click", () => {
+      const tipo = button.dataset.tipo;
+      filtrarPessoas(tipo);
+    });
+  });
+});
 
 function configurarFiltroTabela() {
   const filtroInput = document.getElementById("filtro-tabela");

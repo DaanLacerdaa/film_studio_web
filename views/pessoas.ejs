@@ -70,6 +70,22 @@
       ></div>
     </main>
 
+    <h2>Filtrar Pessoas</h2>
+<button class="botao-filtro" data-tipo="ator">Atores</button>
+<button class="botao-filtro" data-tipo="diretor">Diretores</button>
+<button class="botao-filtro" data-tipo="produtor">Produtores</button>
+
+<ul id="lista-pessoas">
+  <% Object.keys(pessoas).forEach(tipo => { %>
+    <li><strong><%= tipo %></strong></li>
+    <ul>
+      <% pessoas[tipo].forEach(pessoa => { %>
+        <li><%= pessoa.nome %></li>
+      <% }) %>
+    </ul>
+  <% }) %>
+</ul>
+
     <%- include('partials/toggle') %>
   </body>
 </html>
