@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtores</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/script.js"></script>
+    <style>
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .card h2 {
+        margin: 10px 0;
+      }
+      .card p {
+        margin: 5px 0;
+        color: #555;
+      }
+      .card .actions {
+        margin-top: 10px;
+      }
+      .card .actions a,
+      .card .actions button {
+        text-decoration: none;
+        color: white;
+        background: #007bff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 5px;
+        display: inline-block;
+      }
+      .card .actions button {
+        background: #dc3545;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Lista de Produtores</h1>
+    <a href="/pessoas/novo">Adicionar Novo Produtor</a>
+
+    <div class="card-grid">
+      <% produtores.forEach(produtor => { %>
+      <div class="card">
+        <h2><%= produtor.nome %></h2>
+        <p>
+          <strong>Data de Nascimento:</strong> <%= produtor.data_nascimento %>
+        </p>
+        <p><strong>Sexo:</strong> <%= produtor.sexo %></p>
+        <p><strong>Nacionalidade:</strong> <%= produtor.nacionalidade %></p>
+        <div class="actions">
+          <a href="/pessoas/editar/<%= produtor.id %>">Editar</a>
+          <form
+            action="/pessoas/deletar/<%= produtor.id %>"
+            method="POST"
+            style="display: inline"
+          >
+            <button type="submit">Deletar</button>
+          </form>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <%- include('partials/toggle') %>
+  </body>
+</html>

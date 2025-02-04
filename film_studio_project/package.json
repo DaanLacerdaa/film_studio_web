@@ -1,0 +1,38 @@
+{
+    "name": "estudio-de-producao-filmes",
+    "version": "1.0.0",
+    "description": "Aplicação de CRUD para um estúdio de produção de filmes com relatórios e gestão de atores, diretores, produtores e filmes.",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "sync-db": "node sync.js"
+    },
+    "dependencies": {
+        "axios": "^1.7.9",
+        "body-parser": "^1.20.3",
+        "connect-flash": "^0.1.1",
+        "dotenv": "^8.2.0",
+        "ejs": "^3.1.10",
+        "estudio-de-producao-filmes": "file:",
+        "express": "^4.21.2",
+        "express-session": "^1.17.1",
+        "mysql2": "^3.12.0",
+        "nodemon": "^2.0.7",
+        "sequelize": "^6.37.5",
+        "sweetalert2": "^11.0.13"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/node": "^22.13.0",
+        "eslint": "^7.32.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-plugin-import": "^2.23.4"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "author": "Danilo Lacerda",
+    "license": "ISC"
+}

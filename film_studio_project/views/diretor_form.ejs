@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= diretor ? 'Editar Diretor' : 'Adicionar Diretor' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/script.js"></script>
+</head>
+<body>
+  <h1><%= diretor ? 'Editar Diretor' : 'Adicionar Diretor' %></h1>
+  <form action="<%= diretor ? '/pessoas/editar/' + diretor.id : '/pessoas' %>" method="POST">
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" value="<%= diretor ? diretor.nome : '' %>" required>
+    <br>
+    <label for="data_nascimento">Data de Nascimento:</label>
+    <input type="date" id="data_nascimento" name="data_nascimento" value="<%= diretor ? diretor.data_nascimento : '' %>" required>
+    <br>
+    <label for="sexo">Sexo:</label>
+    <select id="sexo" name="sexo" required>
+      <option value="Masculino" <%= diretor && diretor.sexo === 'Masculino' ? 'selected' : '' %>>Masculino</option>
+      <option value="Feminino" <%= diretor && diretor.sexo === 'Feminino' ? 'selected' : '' %>>Feminino</option>
+      <option value="Outro" <%= produtor && produtor.sexo === 'Outro' ? 'selected' : '' %>>Outro</option>
+    </select>
+    <br>
+    <label for="nacionalidade">Nacionalidade:</label>
+    <input type="text" id="nacionalidade" name="nacionalidade" value="<%= diretor ? diretor.nacionalidade : '' %>" required>
+    <br>
+    <button type="submit">Salvar</button>
+  </form>
+
+  <%- include('partials/toggle') %>
+
+</body>
+</html>

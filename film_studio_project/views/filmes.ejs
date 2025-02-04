@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Filmes</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script defer src="/js/script.js"></script>
+
+    <style>
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .card h2 {
+        margin: 10px 0;
+      }
+      .card p {
+        margin: 5px 0;
+        color: #555;
+      }
+      .card .movie-cover img {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+      }
+      .actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+      .actions a,
+      .actions button {
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('partials/header') %>
+    <main class="container">
+      <h1>Lista de Filmes</h1>
+      <a href="/filmes/novo" class="btn">Adicionar Novo Filme</a>
+
+      <div
+        id="filmes-container"
+        class="card-grid"
+        data-filmes="<%= JSON.stringify(filmes) %>"
+      ></div>
+    </main>
+
+    <%- include('partials/toggle') %>
+  </body>
+</html>

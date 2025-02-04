@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= (filme && filme.id) ? 'Editar Filme' : 'Adicionar Filme' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/script.js"></script>
+</head>
+<body>
+  <h1><%= (filme && filme.id) ? 'Editar Filme' : 'Adicionar Filme' %></h1>
+
+  <!-- Formulário para o filme -->
+  <form action="<%= (filme && filme.id) ? '/filmes/editar/' + filme.id : '/filmes' %>" method="POST">
+    <label for="titulo">Título:</label>
+    <input type="text" id="titulo" name="titulo" value="<%= filme ? filme.titulo : '' %>" required><br><br>
+    <label for="ano_lancamento">Ano de Lançamento:</label>
+    <input type="interger" id="ano_lancamento" name="ano_lancamento" value="<%= filme ? filme.ano_lancamento : '' %>" required><br><br>
+    <label for="duracao">Duração:</label>
+    <input type="text" id="duracao" name="duracao" value="<%= filme ? filme.duracao : '' %>" required><br><br>
+    <label for="genero">Gênero:</label>
+    <input type="text" id="genero" name="genero" value="<%= filme ? filme.genero : '' %>" required><br><br>
+    <label for="idioma">Idioma:</label>
+    <input type="text" id="idioma" name="idioma" value="<%= filme ? filme.idioma : '' %>" required><br><br>
+
+    <label for="diretor_id">Diretor:</label>
+    <select id="diretor_id" name="diretor_id" required>
+      <% diretores.forEach(diretor => { %>
+        <option value="<%= diretor.id %>" <%= filme && filme.diretor_id === diretor.id ? 'selected' : '' %> >
+          <%= diretor.nome %>
+        </option>
+      <% }) %>
+    </select><br><br>
+
+    <label for="produtores">Produtores:</label>
+    <select id="produtores" name="produtores" multiple>
+      <% produtores.forEach(produtor => { %>
+        <option value="<%= produtor.id %>" <%= filme && filme.produtores && filme.produtores.some(p => p.id === produtor.id) ? 'selected' : '' %> >
+          <%= produtor.nome %>
+        </option>
+      <% }) %>
+    </select><br><br>
+
+    <button type="submit">Salvar</button>
+  </form>
+  
+  <%- include('partials/toggle') %>
+
+</body>
+</html>

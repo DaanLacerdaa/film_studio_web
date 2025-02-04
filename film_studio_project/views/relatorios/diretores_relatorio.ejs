@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relatório de Diretores</title>
+  </head>
+  <body>
+    <h1>Relatório de Diretores</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Data de Nascimento</th>
+          <th>Nacionalidade</th>
+          <th>Filmes Dirigidos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% diretores.forEach(diretor => { %>
+        <tr>
+          <td><%= diretor.nome %></td>
+          <td><%= diretor.data_nascimento %></td>
+          <td><%= diretor.nacionalidade %></td>
+          <td>
+            <% diretor.filmes.forEach(filme => { %>
+            <span><%= filme.titulo %></span><br />
+            <% }); %>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </body>
+</html>

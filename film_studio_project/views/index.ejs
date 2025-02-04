@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estúdio de Filmes</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>Bem-vindo ao Estúdio de Produção de Filmes</h1>
+
+    <nav>
+      <ul class="menu">
+        <li>
+          <a href="/filmes">Filmes</a>
+          <ul class="submenu">
+            <li><a href="/filmes/novo">Adicionar Filme</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="/pessoas/atores">Atores</a>
+          <ul class="submenu">
+            <li><a href="/pessoas/novo?tipo=Ator">Novo Ator</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="/pessoas/diretores">Diretores</a>
+          <ul class="submenu">
+            <li><a href="/pessoas/novo?tipo=Diretor">Novo Diretor</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="/pessoas/produtores">Produtores</a>
+          <ul class="submenu">
+            <li><a href="/pessoas/novo?tipo=Produtor">Novo Produtor</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <%- include('partials/toggle') %>
+  </body>
+</html>

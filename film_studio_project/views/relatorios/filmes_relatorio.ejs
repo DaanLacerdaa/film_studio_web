@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relatório de Filmes</title>
+  </head>
+  <body>
+    <h1>Relatório de Filmes</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Duração (min)</th>
+          <th>Idioma</th>
+          <th>Diretor</th>
+          <th>Produtores</th>
+          <th>Atores</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% filmes.forEach(filme => { %>
+        <tr>
+          <td><%= filme.titulo %></td>
+          <td><%= filme.duracao %></td>
+          <td><%= filme.idioma %></td>
+          <td><%= filme.diretor.nome %></td>
+          <td>
+            <% filme.produtores.forEach(produtor => { %>
+            <span><%= produtor.nome %></span><br />
+            <% }); %>
+          </td>
+          <td>
+            <% filme.atores.forEach(ator => { %>
+            <span><%= ator.nome %></span><br />
+            <% }); %>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </body>
+</html>
