@@ -1,3 +1,5 @@
+const { buscarFilme } = require("../utils/api");
+
 document.addEventListener("DOMContentLoaded", async () => {
   aplicarTema();
   configurarToggleTema();

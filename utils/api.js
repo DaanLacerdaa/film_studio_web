@@ -40,4 +40,4 @@ async function buscarFilme(titulo) {
       return null;
     }
   }
-  
+  module.exports = { buscarFilme };
