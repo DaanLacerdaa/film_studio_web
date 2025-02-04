@@ -97,6 +97,10 @@ async function carregarPessoasDoBanco() {
 
         const card = document.createElement("div");
         card.classList.add("card");
+        const img = card.querySelector('img');
+        img.onerror = function() {
+          this.src = "/images/default-person.jpg";
+        };
         card.innerHTML = `
           <h2>${pessoa.nome}</h2>
           <div class="person-photo">
@@ -130,63 +134,38 @@ async function carregarPessoasDoBanco() {
   }
 }
 
-// ========== 🌐 FUNÇÕES DE API ==========
-async function buscarFilme(titulo) {
-  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
-  const apiKeyOMDB = "ea8906de";
-
-  try {
-    // Primeira busca no TMDB
-    const responseTMDB = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
-        titulo
-      )}&language=pt-BR`
-    );
-
-    const dataTMDB = await responseTMDB.json();
-    if (!dataTMDB.results?.length) return null;
-
-    const filmeTMDB = dataTMDB.results[0];
-
-    // Busca complementar no OMDB
-    const responseOMDB = await fetch(
-      `https://www.omdbapi.com/?t=${encodeURIComponent(
-        filmeTMDB.original_title
-      )}&apikey=${apiKeyOMDB}`
-    );
-
-    const dataOMDB = await responseOMDB.json();
-
-    return {
-      tituloOriginal: filmeTMDB.original_title,
-      posterPath: filmeTMDB.poster_path
-        ? `https://image.tmdb.org/t/p/w500${filmeTMDB.poster_path}`
-        : dataOMDB.Poster || "/images/default-movie.jpg",
-      imdbRating: dataOMDB.imdbRating || "N/A",
-      rottenTomatoes:
-        dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value ||
-        "N/A",
-    };
-  } catch (error) {
-    console.error("Erro na busca de filme:", error);
-    return null;
-  }
-}
 
 async function buscarImagemPessoa(nome) {
   const apiKey = "50c08b07f173158a7370068b082b9294";
+  const nomeFormatado = nome
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/[^a-zA-Z ]/g, " ") // Remove caracteres especiais
+    .trim();
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(
-        nome
-      )}`
+      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nomeFormatado)}&language=pt-BR`
     );
 
+    if (!response.ok) throw new Error("Erro na API");
+
     const data = await response.json();
-    return data.results?.[0]?.profile_path
-      ? `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`
-      : "/images/default-person.jpg";
+    const resultado = data.results?.[0];
+    
+    if (resultado?.profile_path) {
+      return `https://image.tmdb.org/t/p/w500${resultado.profile_path}`;
+    }
+    
+    // Fallback para busca em inglês
+    const responseEN = await fetch(
+      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nomeFormatado)}`
+    );
+    
+    const dataEN = await responseEN.json();
+    return dataEN.results?.[0]?.profile_path ?
+      `https://image.tmdb.org/t/p/w500${dataEN.results[0].profile_path}` :
+      "/images/default-person.jpg";
+      
   } catch (error) {
     console.error("Erro na busca de imagem:", error);
     return "/images/default-person.jpg";

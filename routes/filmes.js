@@ -3,7 +3,7 @@ const router = express.Router();
 const Filme = require("../models/filme");
 const Pessoa = require("../models/pessoa");
 const Atuacao = require("../models/atuacao");
-const { buscarFilme } = require("../js/script")
+const { buscarFilme } = require("../utils/api")
 
 // Listar todos os filmes
 router.get("/", async (req, res) => {
