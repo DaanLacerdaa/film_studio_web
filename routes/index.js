@@ -38,7 +38,7 @@ router.get("/filmes", async (req, res) => {
       include: [
         { model: Pessoa, as: "diretor", attributes: ["id", "nome"] },
         { model: Pessoa, as: "produtores", attributes: ["id", "nome"], through: { attributes: [] } },
-        { model: Pessoa, as: "atores", attributes: ["id", "nome"], through: { attributes: ["is_principal"] } },
+        { model: Pessoa, as: "elenco", attributes: ["id", "nome"], through: { attributes: ["is_principal"] } },
       ],
       order: [["ano_lancamento", "DESC"]],
     });
