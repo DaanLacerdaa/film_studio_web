@@ -1,6 +1,6 @@
 const sequelize = require("../database/database");
-const Pessoa = require("./pessoa");
-const Filme = require("./filme");
+const Pessoa = require("./Pessoa");
+const Filme = require("./Filme");
 const Atuacao = require("./atuacao");
 const Producao = require("./producao");
 

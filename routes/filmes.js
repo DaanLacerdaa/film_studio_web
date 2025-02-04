@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Filme = require("../models/filme");
-const Pessoa = require("../models/pessoa");
+const Filme = require("../models/Filme");
+const Pessoa = require("../models/Pessoa");
 const Atuacao = require("../models/atuacao");
 
 // Listar todos os filmes
