@@ -1,6 +1,6 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database/database");
-const Filme = require("./Filme");
+const Filme = require("./filme");
 const Atuacao = require("./atuacao");
 const Producao = require("./producao");
 
