@@ -38,7 +38,7 @@ async function carregarFilmesDoBanco() {
           filme.produtores?.map((p) => p.nome).join(", ") || "Nenhum"
         }</p>
         <p><strong>Atores Principais:</strong> ${
-          filme.atores
+          filme.elenco
             ?.filter((a) => a.Atuacao.is_principal)
             .map((a) => a.nome)
             .join(", ") || "Nenhum"
