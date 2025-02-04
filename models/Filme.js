@@ -55,23 +55,25 @@ Filme.init(
 );
 
 // Definição dos relacionamentos
+// Relacionamento com Diretor
+// Relacionamentos
 Filme.belongsTo(Pessoa, {
-  foreignKey: "diretor_id", // Relacionamento com a chave estrangeira
-  as: "diretor", // Alias para acessar o diretor
+  foreignKey: "diretor_id",
+  as: "diretor",
 });
 
 Filme.belongsToMany(Pessoa, {
   through: Atuacao,
   foreignKey: "filme_id",
   otherKey: "pessoa_id",
-  as: "elenco", // Alias para acessar os atores
+  as: "elenco",
 });
 
 Filme.belongsToMany(Pessoa, {
   through: Producao,
   foreignKey: "filme_id",
   otherKey: "pessoa_id",
-  as: "produtores", // Alias para acessar os produtores
+  as: "produtores",
 });
 
 module.exports = Filme;
