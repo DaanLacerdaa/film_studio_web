@@ -49,14 +49,14 @@ Pessoa.hasMany(Filme, {
 });
 
 Pessoa.belongsToMany(Filme, {
-  through: atuacao,
+  through: Atuacao,
   foreignKey: "pessoa_id",
   otherKey: "filme_id",
   as: "atuacoes", // Alias para acessar os filmes nos quais a pessoa atuou
 });
 
 Pessoa.belongsToMany(Filme, {
-  through: producao,
+  through: Producao,
   foreignKey: "pessoa_id",
   otherKey: "filme_id",
   as: "filmes_produzidos", // Alias para acessar os filmes produzidos

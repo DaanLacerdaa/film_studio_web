@@ -39,4 +39,10 @@ Producao.beforeCreate(async (producao, options) => {
   }
 });
 
+
+// Relacionamentos
+Producao.belongsTo(Pessoa, { foreignKey: "pessoa_id", as: "produtor" });
+Producao.belongsTo(Filme, { foreignKey: "filme_id", as: "filme" });
+
+
 module.exports = Producao;

@@ -34,4 +34,9 @@ const Atuacao = sequelize.define(
   }
 );
 
+
+// Relacionamentos
+Atuacao.belongsTo(Pessoa, { foreignKey: "pessoa_id", as: "pessoa" });
+Atuacao.belongsTo(Filme, { foreignKey: "filme_id", as: "filme" });
+
 module.exports = Atuacao;

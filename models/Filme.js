@@ -54,8 +54,6 @@ Filme.init(
   }
 );
 
-// Definição dos relacionamentos
-// Relacionamento com Diretor
 // Relacionamentos
 Filme.belongsTo(Pessoa, {
   foreignKey: "diretor_id",
@@ -63,14 +61,14 @@ Filme.belongsTo(Pessoa, {
 });
 
 Filme.belongsToMany(Pessoa, {
-  through: atuacao,
+  through: Atuacao,
   foreignKey: "filme_id",
   otherKey: "pessoa_id",
   as: "elenco",
 });
 
 Filme.belongsToMany(Pessoa, {
-  through: producao,
+  through: Producao,
   foreignKey: "filme_id",
   otherKey: "pessoa_id",
   as: "produtores",
