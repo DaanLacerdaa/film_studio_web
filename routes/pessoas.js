@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { Pessoa } = require("../models");
 
-// Rota para listar todas as pessoas
+// Listar todas as pessoas
 router.get("/", async (req, res) => {
   try {
     const pessoas = await Pessoa.findAll({
       attributes: ["id", "nome"],
+      order: [["nome", "ASC"]]
     });
 
     res.render("pessoas", { pessoas });
@@ -16,23 +17,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
-  // Usando router.get ao invés de app.get
-  try {
-    const pessoas = await Pessoa.findAll(); // Lê todas as pessoas do banco de dados
-    res.render("pessoas", { pessoas });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao carregar a lista de pessoas");
-  }
-});
-
-// Rota para exibir o formulário de criação
+// Formulário para criar nova pessoa
 router.get("/novo", (req, res) => {
   res.render("pessoa_form", { pessoa: null });
 });
 
-// Rota para adicionar uma nova pessoa
+// Criar nova pessoa
 router.post("/", async (req, res) => {
   const { nome, data_nascimento, sexo, nacionalidade, tipo } = req.body;
   try {
@@ -44,14 +34,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Rota para editar uma pessoa existente
+// Formulário para editar pessoa
 router.get("/editar/:id", async (req, res) => {
   try {
     const pessoa = await Pessoa.findByPk(req.params.id);
-
-    if (!pessoa) {
-      return res.status(404).send("Pessoa não encontrada");
-    }
+    if (!pessoa) return res.status(404).send("Pessoa não encontrada");
 
     res.render("pessoa_form", { pessoa });
   } catch (err) {
@@ -60,7 +47,7 @@ router.get("/editar/:id", async (req, res) => {
   }
 });
 
-// Rota para atualizar uma pessoa
+// Atualizar pessoa
 router.post("/editar/:id", async (req, res) => {
   const { nome, data_nascimento, sexo, nacionalidade, tipo } = req.body;
   try {
@@ -75,10 +62,13 @@ router.post("/editar/:id", async (req, res) => {
   }
 });
 
-// Rota para deletar uma pessoa
+// Deletar pessoa
 router.post("/deletar/:id", async (req, res) => {
   try {
-    await Pessoa.destroy({ where: { id: req.params.id } });
+    const pessoa = await Pessoa.findByPk(req.params.id);
+    if (!pessoa) return res.status(404).send("Pessoa não encontrada");
+
+    await pessoa.destroy();
     res.redirect("/pessoas");
   } catch (err) {
     console.error(err);
@@ -86,33 +76,33 @@ router.post("/deletar/:id", async (req, res) => {
   }
 });
 
-module.exports = router; // Exportando o router para uso em app.js
-
-// Rotas para tipos específicos (Novo!)
+// Listar atores
 router.get("/atores", async (req, res) => {
   try {
-    const atores = await Pessoa.findAll({ where: { tipo: "Ator" } });
-    res.render("atores", { atores }); // Certifique-se de ter a view atores.ejs
+    const atores = await Pessoa.findAll({ where: { tipo: "Ator" }, order: [["nome", "ASC"]] });
+    res.render("atores", { atores });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar atores");
   }
 });
 
+// Listar diretores
 router.get("/diretores", async (req, res) => {
   try {
-    const diretores = await Pessoa.findAll({ where: { tipo: "Diretor" } });
-    res.render("diretores", { diretores }); // Crie a view diretores.ejs
+    const diretores = await Pessoa.findAll({ where: { tipo: "Diretor" }, order: [["nome", "ASC"]] });
+    res.render("diretores", { diretores });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar diretores");
   }
 });
 
+// Listar produtores
 router.get("/produtores", async (req, res) => {
   try {
-    const produtores = await Pessoa.findAll({ where: { tipo: "Produtor" } });
-    res.render("produtores", { produtores }); // Crie a view produtores.ejs
+    const produtores = await Pessoa.findAll({ where: { tipo: "Produtor" }, order: [["nome", "ASC"]] });
+    res.render("produtores", { produtores });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar produtores");

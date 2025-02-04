@@ -1,5 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
+const Pessoa = require("./pessoa");
+const Atuacao = require("./atuacao");
+const Producao = require("./producao");
 
 const Filme = sequelize.define(
   "Filme",
@@ -13,10 +16,9 @@ const Filme = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    // models/filme.js (trecho relevante)
     ano_lancamento: {
-      type: DataTypes.INTEGER, // Tipo deve ser INTEGER
-      allowNull: false, // Ou true, dependendo do caso
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     genero: {
       type: DataTypes.STRING,
@@ -29,7 +31,7 @@ const Filme = sequelize.define(
     idioma: {
       type: DataTypes.STRING,
       allowNull: false,
-    }, // No modelo Filme
+    },
     campo_imagem: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -38,7 +40,7 @@ const Filme = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "pessoa", // Nome correto da tabela no banco
+        model: "pessoa",
         key: "id",
       },
     },
@@ -48,38 +50,25 @@ const Filme = sequelize.define(
     timestamps: false,
   }
 );
-module.exports = (sequelize, DataTypes) => {
-  const Filme = sequelize.define("Filme", {
-    titulo: DataTypes.STRING,
-    ano_lancamento: DataTypes.INTEGER,
-    genero: DataTypes.STRING,
-    duracao: DataTypes.INTEGER,
-    idioma: DataTypes.STRING,
-  });
 
-  // Relacionamento com Diretor
-  Filme.belongsTo(Pessoa, {
-    foreignKey: "diretor_id", // Chave estrangeira
-    as: "diretor", // Alias para acessar o diretor do filme
-  });
+// Definição dos relacionamentos
+Filme.belongsTo(Pessoa, {
+  foreignKey: "diretor_id",
+  as: "diretor",
+});
 
-  // Relacionamento com Atores (Elenco)
-  Filme.belongsToMany(Pessoa, {
-    through: "Atuacao", // Relacionamento através da tabela "Atuacao"
-    foreignKey: "filme_id", // Chave estrangeira no modelo Atuacao
-    otherKey: "pessoa_id", // Chave estrangeira para a pessoa no modelo Atuacao
-    as: "elenco", // Alias para acessar o elenco do filme
-  });
+Filme.belongsToMany(Pessoa, {
+  through: Atuacao,
+  foreignKey: "filme_id",
+  otherKey: "pessoa_id",
+  as: "elenco",
+});
 
-  // Relacionamento com Produtores
-  Filme.belongsToMany(Pessoa, {
-    through: "FilmeProdutor", // Relacionamento através da tabela "FilmeProdutor"
-    foreignKey: "filme_id",
-    otherKey: "pessoa_id",
-    as: "produtores", // Alias para acessar os produtores
-  });
-
-  return Filme;
-};
+Filme.belongsToMany(Pessoa, {
+  through: Producao,
+  foreignKey: "filme_id",
+  otherKey: "pessoa_id",
+  as: "produtores",
+});
 
 module.exports = Filme;

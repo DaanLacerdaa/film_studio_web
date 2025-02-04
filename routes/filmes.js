@@ -1,41 +1,29 @@
 const express = require("express");
 const router = express.Router();
-const Filme = require("../models/filme"); // Modelo do filme
-const Pessoa = require("../models/pessoa"); // Modelo de pessoa (atores, produtores)
-const Atuacao = require("../models/atuacao"); // Relacionamento de atuação
+const Filme = require("../models/filme");
+const Pessoa = require("../models/pessoa");
+const Atuacao = require("../models/atuacao");
 
 // Listar todos os filmes
-
 router.get("/", async (req, res) => {
   try {
     const filmes = await Filme.findAll({
-      attributes: [
-        "id",
-        "titulo",
-        "ano_lancamento",
-        "genero",
-        "duracao",
-        "idioma",
-      ],
+      attributes: ["id", "titulo", "ano_lancamento", "genero", "duracao", "idioma"],
       include: [
         {
           model: Pessoa,
-          as: "diretor", // Relacionamento com Diretor
-          attributes: ["nome"], // Inclui o nome do diretor
-        },
-        {
-          model: Pessoa,
-          as: "elenco", // Relacionamento com Atores (Elenco)
+          as: "diretor",
           attributes: ["nome"],
-          through: {
-            model: Atuacao,
-            attributes: ["is_principal"],
-            where: { is_principal: true }, // Somente atores principais
-          },
         },
         {
           model: Pessoa,
-          as: "produtores", // Relacionamento com Produtores
+          as: "elenco",
+          attributes: ["nome"],
+          through: { model: Atuacao, attributes: ["is_principal"] }, // Mantendo relacionamento
+        },
+        {
+          model: Pessoa,
+          as: "produtores",
           attributes: ["nome"],
         },
       ],
@@ -66,9 +54,9 @@ router.post("/", async (req, res) => {
   try {
     const filme = await Filme.create({ titulo, duracao, idioma, diretor_id });
 
-    // Adicionar produtores ao filme (caso haja)
-    if (produtores && Array.isArray(produtores)) {
-      await filme.setProdutores(produtores); // Relacionamento entre filme e produtores
+    // Adicionar produtores ao filme (verificação extra)
+    if (produtores && Array.isArray(produtores) && produtores.length > 0) {
+      await filme.setProdutores(produtores);
     }
 
     res.redirect("/filmes");
@@ -81,38 +69,33 @@ router.post("/", async (req, res) => {
 // Formulário para editar um filme
 router.get("/editar/:id", async (req, res) => {
   try {
-    const filme = await Filme.findOne({
-      where: { id: req.params.id },
+    const filme = await Filme.findByPk(req.params.id, {
       include: [
         {
           model: Pessoa,
           as: "elenco",
-          attributes: ["nome"],
-          through: {
-            model: Atuacao,
-            attributes: ["is_principal"],
-            where: { is_principal: true },
-          },
+          attributes: ["id", "nome"],
+          through: { model: Atuacao, attributes: ["is_principal"] },
         },
         {
           model: Pessoa,
           as: "produtores",
-          attributes: ["nome"],
+          attributes: ["id", "nome"],
         },
         {
           model: Pessoa,
-          as: "diretor", // Diretor
-          attributes: ["nome"],
+          as: "diretor",
+          attributes: ["id", "nome"],
         },
       ],
     });
 
-    const diretores = await Pessoa.findAll({ where: { tipo: "diretor" } });
-    const produtores = await Pessoa.findAll({ where: { tipo: "produtor" } });
-
     if (!filme) {
       return res.status(404).send("Filme não encontrado");
     }
+
+    const diretores = await Pessoa.findAll({ where: { tipo: "diretor" } });
+    const produtores = await Pessoa.findAll({ where: { tipo: "produtor" } });
 
     res.render("filme_form", { filme, diretores, produtores });
   } catch (err) {
@@ -125,16 +108,19 @@ router.get("/editar/:id", async (req, res) => {
 router.post("/editar/:id", async (req, res) => {
   const { titulo, duracao, idioma, diretor_id, produtores } = req.body;
   try {
-    await Filme.update(
-      { titulo, duracao, idioma, diretor_id },
-      { where: { id: req.params.id } }
-    );
-
     const filme = await Filme.findByPk(req.params.id);
 
-    // Atualizar relacionamento com produtores
-    if (produtores && Array.isArray(produtores)) {
-      await filme.setProdutores(produtores); // Atualiza a relação com os produtores
+    if (!filme) {
+      return res.status(404).send("Filme não encontrado");
+    }
+
+    await filme.update({ titulo, duracao, idioma, diretor_id });
+
+    // Atualizar produtores (verificação extra)
+    if (produtores && Array.isArray(produtores) && produtores.length > 0) {
+      await filme.setProdutores(produtores);
+    } else {
+      await filme.setProdutores([]); // Remove os produtores se não vier nenhum
     }
 
     res.redirect("/filmes");
@@ -147,7 +133,17 @@ router.post("/editar/:id", async (req, res) => {
 // Deletar um filme
 router.post("/deletar/:id", async (req, res) => {
   try {
-    await Filme.destroy({ where: { id: req.params.id } });
+    const filme = await Filme.findByPk(req.params.id);
+
+    if (!filme) {
+      return res.status(404).send("Filme não encontrado");
+    }
+
+    // Removendo as associações antes de deletar
+    await filme.setProdutores([]);
+    await filme.setElenco([]);
+
+    await filme.destroy();
     res.redirect("/filmes");
   } catch (err) {
     console.error(err);

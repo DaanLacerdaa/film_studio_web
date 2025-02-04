@@ -1,7 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
-const Filme = require("./filme");
-const Pessoa = require("./pessoa");
 
 const Atuacao = sequelize.define(
   "Atuacao",
@@ -13,7 +11,7 @@ const Atuacao = sequelize.define(
         model: "filme",
         key: "id",
       },
-      primaryKey: true, // Definindo como parte da chave primária composta
+      primaryKey: true,
     },
     pessoa_id: {
       type: DataTypes.INTEGER,
@@ -22,7 +20,7 @@ const Atuacao = sequelize.define(
         model: "pessoa",
         key: "id",
       },
-      primaryKey: true, // Definindo como parte da chave primária composta
+      primaryKey: true,
     },
     is_principal: {
       type: DataTypes.BOOLEAN,
@@ -33,12 +31,6 @@ const Atuacao = sequelize.define(
   {
     tableName: "atuacao",
     timestamps: false,
-    indexes: [
-      {
-        unique: true, // Combinando filme_id + pessoa_id como única
-        fields: ["filme_id", "pessoa_id"],
-      },
-    ],
   }
 );
 

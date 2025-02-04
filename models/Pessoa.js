@@ -1,5 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
+const Filme = require("./filme");
+const Atuacao = require("./atuacao");
+const Producao = require("./producao");
 
 const Pessoa = sequelize.define(
   "Pessoa",
@@ -26,7 +29,7 @@ const Pessoa = sequelize.define(
       allowNull: false,
     },
     tipo: {
-      type: DataTypes.ENUM("Ator", "Diretor", "Produtor"),
+      type: DataTypes.ENUM("ATOR", "DIRETOR", "PRODUTOR"),
       allowNull: false,
     },
   },
@@ -35,38 +38,25 @@ const Pessoa = sequelize.define(
     timestamps: false,
   }
 );
-module.exports = (sequelize, DataTypes) => {
-  const Pessoa = sequelize.define("Pessoa", {
-    nome: DataTypes.STRING,
-    data_nascimento: DataTypes.DATE,
-    sexo: DataTypes.STRING,
-    nacionalidade: DataTypes.STRING,
-    tipo: DataTypes.STRING, // Ex: "Ator", "Diretor", "Produtor"
-  });
 
-  // Relacionamento com Filmes como Diretor
-  Pessoa.hasMany(Filme, {
-    foreignKey: "diretor_id",
-    as: "filmes_dirigidos", // Alias para acessar os filmes dirigidos pela pessoa
-  });
+// Relacionamentos
+Pessoa.hasMany(Filme, {
+  foreignKey: "diretor_id",
+  as: "filmes_dirigidos",
+});
 
-  // Relacionamento com Filmes como Atores (Elenco)
-  Pessoa.belongsToMany(Filme, {
-    through: "Atuacao",
-    foreignKey: "pessoa_id",
-    otherKey: "filme_id",
-    as: "filmes", // Alias para acessar os filmes em que a pessoa atuou
-  });
+Pessoa.belongsToMany(Filme, {
+  through: Atuacao,
+  foreignKey: "pessoa_id",
+  otherKey: "filme_id",
+  as: "atuacoes",
+});
 
-  // Relacionamento com Filmes como Produtores
-  Pessoa.belongsToMany(Filme, {
-    through: "FilmeProdutor",
-    foreignKey: "pessoa_id",
-    otherKey: "filme_id",
-    as: "filmes_produzidos", // Alias para acessar os filmes produzidos pela pessoa
-  });
-
-  return Pessoa;
-};
+Pessoa.belongsToMany(Filme, {
+  through: Producao,
+  foreignKey: "pessoa_id",
+  otherKey: "filme_id",
+  as: "filmes_produzidos",
+});
 
 module.exports = Pessoa;

@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
-const Pessoa = require("./pessoa"); // Importe o modelo Pessoa para a validação
-const FilmeProdutor = sequelize.define(
-  "filme_produtors",
+
+const Producao = sequelize.define(
+  "Producao",
   {
     filme_id: {
       type: DataTypes.INTEGER,
@@ -15,7 +15,6 @@ const FilmeProdutor = sequelize.define(
       onUpdate: "CASCADE",
     },
     pessoa_id: {
-      // Substituindo produtor_id por pessoa_id
       type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
@@ -27,20 +26,17 @@ const FilmeProdutor = sequelize.define(
     },
   },
   {
+    tableName: "producao",
     timestamps: false,
   }
 );
 
-// Garantir que só PRODUTORES possam ser inseridos
-FilmeProdutor.beforeCreate(async (filmeProdutor, options) => {
-  const pessoa = await sequelize.models.pessoa.findByPk(
-    filmeProdutor.pessoa_id
-  );
+// Garante que apenas PRODUTORES possam ser inseridos na Produção
+Producao.beforeCreate(async (producao, options) => {
+  const pessoa = await sequelize.models.Pessoa.findByPk(producao.pessoa_id);
   if (!pessoa || pessoa.tipo !== "PRODUTOR") {
-    throw new Error(
-      "A pessoa deve ser do tipo PRODUTOR para ser adicionada a Filme_Produtor."
-    );
+    throw new Error("A pessoa deve ser do tipo PRODUTOR para ser adicionada à Produção.");
   }
 });
 
-module.exports = FilmeProdutor;
+module.exports = Producao;
