@@ -3,14 +3,22 @@ const router = express.Router();
 const { Pessoa } = require("../models");
 
 // Listar todas as pessoas
+// Listar todas as pessoas agrupadas por tipo
 router.get("/", async (req, res) => {
   try {
     const pessoas = await Pessoa.findAll({
-      attributes: ["id", "nome"],
-      order: [["nome", "ASC"]]
+      attributes: ["id", "nome", "tipo"],
+      order: [["tipo", "ASC"], ["nome", "ASC"]],
     });
 
-    res.render("pessoas", { pessoas });
+    // Agrupar os resultados manualmente
+    const agrupado = pessoas.reduce((acc, pessoa) => {
+      if (!acc[pessoa.tipo]) acc[pessoa.tipo] = [];
+      acc[pessoa.tipo].push(pessoa);
+      return acc;
+    }, {});
+
+    res.render("pessoas", { pessoasAgrupadas: agrupado });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar pessoas");
