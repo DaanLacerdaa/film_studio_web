@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const filmesRoutes = require("./routes/filmes");
 const pessoasRoutes = require("./routes/pessoas"); // Rota unificada para atores, diretores e produtores
 
+
 // Configuração do EJS para renderização de views
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
