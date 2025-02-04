@@ -10,8 +10,7 @@ router.get("/", async (req, res) => {
       attributes: ["id", "nome", "data_nascimento", "sexo", "nacionalidade", "tipo"],
       order: [["tipo", "ASC"], ["nome", "ASC"]],
     });
-    
-    const pessoasPlain = pessoas.map(p => p.get({ plain: true }));
+
     // Agrupar usando reduce
     const agrupado = pessoas.reduce((acc, pessoa) => {
       const tipo = pessoa.tipo;

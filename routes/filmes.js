@@ -26,13 +26,11 @@ router.get("/", async (req, res) => {
           model: Pessoa,
           as: "produtores",
           attributes: ["nome"],
-          through: { attributes: [] }, // Mantendo relacionamento
         },
       ],
     });
 
-    const filmesPlain = filmes.map((filme) => filme.get( { plain:true}));
-    res.render("filmes", { filmes: filmesPlain || [] });
+    res.render("filmes", { filmes: filmes || [] });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar filmes");
@@ -51,30 +49,17 @@ router.get("/novo", async (req, res) => {
   }
 });
 
-// Criar um novo filme com dados externos
+// Criar um novo filme
 router.post("/", async (req, res) => {
   const { titulo, duracao, idioma, diretor_id, produtores } = req.body;
-  const { elenco, is_principal } = req.body;
   try {
-    // Buscar informações externas sobre o filme
-    const dadosExternos = await buscarFilme(titulo);
-
-    const filme = await Filme.create({
-      titulo,
-      duracao,
-      idioma,
-      diretor_id,
-      campo_imagem: dadosExternos.posterPath, // Salva a URL da imagem no banco
-    });
+    const filme = await Filme.create({ titulo, duracao, idioma, diretor_id });
 
     // Adicionar produtores ao filme (verificação extra)
     if (produtores && Array.isArray(produtores) && produtores.length > 0) {
       await filme.setProdutores(produtores);
     }
-    // Dentro do try/catch:
-    if (elenco && Array.isArray(elenco)) {
-      await filme.setElenco(elenco, { through: { is_principal } });
-    }
+
     res.redirect("/filmes");
   } catch (err) {
     console.error(err);
@@ -110,8 +95,8 @@ router.get("/editar/:id", async (req, res) => {
       return res.status(404).send("Filme não encontrado");
     }
 
-    const diretores = await Pessoa.findAll({ where: { tipo: "DIRETOR" } });
-    const produtores = await Pessoa.findAll({ where: { tipo: "PRODUTOR" } });
+    const diretores = await Pessoa.findAll({ where: { tipo: "diretor" } });
+    const produtores = await Pessoa.findAll({ where: { tipo: "produtor" } });
 
     res.render("filme_form", { filme, diretores, produtores });
   } catch (err) {
@@ -167,7 +152,33 @@ router.post("/deletar/:id", async (req, res) => {
   }
 });
 
+// Criar um novo filme com dados externos
+router.post("/", async (req, res) => {
+  const { titulo, duracao, idioma, diretor_id, produtores } = req.body;
 
+  try {
+    // Buscar informações externas sobre o filme
+    const dadosExternos = await buscarFilme(titulo);
+
+    const filme = await Filme.create({
+      titulo,
+      duracao,
+      idioma,
+      diretor_id,
+      campo_imagem: dadosExternos.posterPath, // Salva a URL da imagem no banco
+    });
+
+    // Adicionar produtores ao filme (verificação extra)
+    if (produtores && Array.isArray(produtores) && produtores.length > 0) {
+      await filme.setProdutores(produtores);
+    }
+
+    res.redirect("/filmes");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao criar o filme");
+  }
+});
 
 
 
