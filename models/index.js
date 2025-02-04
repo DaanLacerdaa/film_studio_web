@@ -4,59 +4,68 @@ const Filme = require("./filme");
 const Atuacao = require("./atuacao");
 const Producao = require("./producao");
 
-// Relacionamentos
-
-// Filme - Diretor (1:N)
-Filme.belongsTo(Pessoa, {
-  foreignKey: "diretor_id",
-  as: "diretor", // Alias para o relacionamento
-});
-
-Pessoa.hasMany(Filme, {
-  foreignKey: "diretor_id",
-  as: "filmes_dirigidos", // Alias para o relacionamento
-});
-
-// Filme - Atores (N:N)
-Filme.belongsToMany(Pessoa, {
-  through: Atuacao,
-  foreignKey: "filme_id",
-  otherKey: "pessoa_id",
-  as: "elenco", // Alias para o relacionamento
-});
-
-Pessoa.belongsToMany(Filme, {
-  through: Atuacao,
-  foreignKey: "pessoa_id",
-  otherKey: "filme_id",
-  as: "atuacoes", // Alias para o relacionamento
-});
-
-// Filme - Produtores (N:N)
-Filme.belongsToMany(Pessoa, {
-  through: Producao,
-  foreignKey: "filme_id",
-  otherKey: "pessoa_id",
-  as: "produtores", // Alias para o relacionamento
-});
-
-Pessoa.belongsToMany(Filme, {
-  through: Producao,
-  foreignKey: "pessoa_id",
-  otherKey: "filme_id",
-  as: "filmes_produzidos", // Alias para o relacionamento
-});
-
-// Sincronização dos modelos
-sequelize.sync({ force: false })  // Use force: true apenas se for necessário para reescrever o banco de dados
-  .then(() => console.log("Banco de dados sincronizado"))
-  .catch((err) => console.error("Erro ao sincronizar o banco de dados", err));
-
-// Exportação dos modelos e da instância sequelize
-module.exports = {
-  sequelize,
+// Defina todos os modelos primeiro
+const models = {
   Pessoa,
   Filme,
   Atuacao,
   Producao,
+};
+
+// Carregar modelos para o sequelize
+Object.values(models).forEach(model => {
+  if (model.associate) {
+    model.associate(sequelize.models);
+  }
+});
+
+// Defina as associações AQUI (sem usar imports diretos)
+Filme.belongsTo(sequelize.models.Pessoa, {
+  foreignKey: "diretor_id",
+  as: "diretor",
+});
+
+sequelize.models.Pessoa.hasMany(Filme, {
+  foreignKey: "diretor_id",
+  as: "filmes_dirigidos",
+});
+
+// Filme - Atores (N:N)
+Filme.belongsToMany(sequelize.models.Pessoa, {
+  through: Atuacao,
+  foreignKey: "filme_id",
+  otherKey: "pessoa_id",
+  as: "elenco",
+});
+
+sequelize.models.Pessoa.belongsToMany(Filme, {
+  through: Atuacao,
+  foreignKey: "pessoa_id",
+  otherKey: "filme_id",
+  as: "atuacoes",
+});
+
+// Filme - Produtores (N:N)
+Filme.belongsToMany(sequelize.models.Pessoa, {
+  through: Producao,
+  foreignKey: "filme_id",
+  otherKey: "pessoa_id",
+  as: "produtores",
+});
+
+sequelize.models.Pessoa.belongsToMany(Filme, {
+  through: Producao,
+  foreignKey: "pessoa_id",
+  otherKey: "filme_id",
+  as: "filmes_produzidos",
+});
+
+// Sincronização
+sequelize.sync({ force: false })
+  .then(() => console.log("Banco de dados sincronizado"))
+  .catch((err) => console.error("Erro ao sincronizar:", err));
+
+module.exports = {
+  sequelize,
+  ...sequelize.models,
 };

@@ -31,18 +31,12 @@ const Producao = sequelize.define(
   }
 );
 
-// Garante que apenas PRODUTORES possam ser inseridos na Produção
-Producao.beforeCreate(async (producao, options) => {
+// Validação para PRODUTOR (mantenha se necessário)
+Producao.beforeCreate(async (producao) => {
   const pessoa = await sequelize.models.Pessoa.findByPk(producao.pessoa_id);
   if (!pessoa || pessoa.tipo !== "PRODUTOR") {
-    throw new Error("A pessoa deve ser do tipo PRODUTOR para ser adicionada à Produção.");
+    throw new Error("A pessoa deve ser PRODUTOR.");
   }
 });
-
-
-// Relacionamentos
-Producao.belongsTo(Pessoa, { foreignKey: "pessoa_id", as: "produtor" });
-Producao.belongsTo(Filme, { foreignKey: "filme_id", as: "filme" });
-
 
 module.exports = Producao;

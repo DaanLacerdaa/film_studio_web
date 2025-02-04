@@ -42,24 +42,5 @@ Pessoa.init(
   }
 );
 
-// Relacionamentos
-Pessoa.hasMany(Filme, {
-  foreignKey: "diretor_id", // Relacionamento com a chave estrangeira
-  as: "filmes_dirigidos", // Alias para acessar os filmes dirigidos
-});
-
-Pessoa.belongsToMany(Filme, {
-  through: Atuacao,
-  foreignKey: "pessoa_id",
-  otherKey: "filme_id",
-  as: "atuacoes", // Alias para acessar os filmes nos quais a pessoa atuou
-});
-
-Pessoa.belongsToMany(Filme, {
-  through: Producao,
-  foreignKey: "pessoa_id",
-  otherKey: "filme_id",
-  as: "filmes_produzidos", // Alias para acessar os filmes produzidos
-});
 
 module.exports = Pessoa;

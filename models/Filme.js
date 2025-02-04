@@ -54,24 +54,6 @@ Filme.init(
   }
 );
 
-// Relacionamentos
-Filme.belongsTo(Pessoa, {
-  foreignKey: "diretor_id",
-  as: "diretor",
-});
 
-Filme.belongsToMany(Pessoa, {
-  through: Atuacao,
-  foreignKey: "filme_id",
-  otherKey: "pessoa_id",
-  as: "elenco",
-});
-
-Filme.belongsToMany(Pessoa, {
-  through: Producao,
-  foreignKey: "filme_id",
-  otherKey: "pessoa_id",
-  as: "produtores",
-});
 
 module.exports = Filme;
