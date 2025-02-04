@@ -63,14 +63,14 @@ Filme.belongsTo(Pessoa, {
 });
 
 Filme.belongsToMany(Pessoa, {
-  through: Atuacao,
+  through: atuacao,
   foreignKey: "filme_id",
   otherKey: "pessoa_id",
   as: "elenco",
 });
 
 Filme.belongsToMany(Pessoa, {
-  through: Producao,
+  through: producao,
   foreignKey: "filme_id",
   otherKey: "pessoa_id",
   as: "produtores",
