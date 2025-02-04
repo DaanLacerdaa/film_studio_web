@@ -3,7 +3,7 @@ const router = express.Router();
 const Filme = require("../models/filme");
 const Pessoa = require("../models/pessoa");
 const Atuacao = require("../models/atuacao");
-const buscarFilme = require("../utils/buscarFilme"); // Função para buscar dados externos
+const { buscarFilme } = require("../js/script")
 
 // Listar todos os filmes
 router.get("/", async (req, res) => {
@@ -155,7 +155,7 @@ router.post("/deletar/:id", async (req, res) => {
 // Criar um novo filme com dados externos
 router.post("/", async (req, res) => {
   const { titulo, duracao, idioma, diretor_id, produtores } = req.body;
-  
+
   try {
     // Buscar informações externas sobre o filme
     const dadosExternos = await buscarFilme(titulo);
@@ -165,7 +165,7 @@ router.post("/", async (req, res) => {
       duracao,
       idioma,
       diretor_id,
-      campo_imagem: dadosExternos.posterPath, // Armazena a URL da imagem
+      campo_imagem: dadosExternos.posterPath, // Salva a URL da imagem no banco
     });
 
     // Adicionar produtores ao filme (verificação extra)
@@ -179,6 +179,7 @@ router.post("/", async (req, res) => {
     res.status(500).send("Erro ao criar o filme");
   }
 });
+
 
 
 
