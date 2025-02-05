@@ -178,41 +178,55 @@ async function buscarFilme(titulo) {
     return null;
   }
 }
-// Modifique a função buscarImagemPessoa
+// ========== 🌐 FUNÇÕES DE API ==========
 async function buscarImagemPessoa(nome) {
-  const apiKey = "50c08b07f173158a7370068b082b9294";
+  const apiKey = "50c08b07f173158a7370068b082b9294";; // Certifique-se de inserir sua API key
 
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nome)}&include_adult=false`
     );
 
+    if (!response.ok) throw new Error("Erro na resposta da API TMDB");
+
     const data = await response.json();
 
-    // Verificação mais robusta dos resultados
-    if (!data.results?.length) {
-      console.warn(`Nenhum resultado para: ${nome}`);
-      return "/images/default-person.jpg";
+    if (!data.results || data.results.length === 0) {
+      console.warn(`Nenhum resultado encontrado para: ${nome}`);
+      return "/images/default-person.jpg"; // Retorna a imagem padrão caso não encontre
     }
 
-    // Seleciona o primeiro resultado relevante
     const pessoa = data.results[0];
-    
-    // Verifica se há uma imagem válida
-    if (!pessoa.profile_path) {
-      console.warn(`Sem imagem para: ${nome}`);
-      return "/images/default-person.jpg";
-    }
 
-    // Corrige a construção da URL
-    return `https://image.tmdb.org/t/p/w276_and_h350_face${pessoa.profile_path}`;
-
+    return pessoa.profile_path
+      ? `https://image.tmdb.org/t/p/w276_and_h350_face${pessoa.profile_path}`
+      : "/images/default-person.jpg";
   } catch (error) {
-    console.error("Erro na busca de imagem:", error);
-    return "/images/default-person.jpg";
+    console.error("Erro ao buscar imagem:", error);
+    return "/images/default-person.jpg"; // Em caso de erro, retorna a imagem padrão
   }
 }
 
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+  document.querySelectorAll("[data-pessoas]").forEach(container => {
+    const tipo = container.getAttribute("data-tipo"); // Obtém o tipo (atores, diretores, produtores)
+    const pessoas = JSON.parse(container.getAttribute("data-pessoas") || "[]");
+
+    container.innerHTML = pessoas.map(pessoa => `
+      <div class="card">
+        <h2>${pessoa.nome}</h2>
+        <div class="person-photo">
+          <img src="${pessoa.imagem || '/images/default-person.jpg'}" alt="Foto de ${pessoa.nome}">
+        </div>
+        <p><strong>Data de Nascimento:</strong> ${pessoa.data_nascimento || "Não disponível"}</p>
+        <p><strong>Sexo:</strong> ${pessoa.sexo || "Não informado"}</p>
+        <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "Não disponível"}</p>
+      </div>
+    `).join("");
+  });
+});
 
 
 // ========== 🖼️ FUNÇÕES DE POPUP ==========
@@ -352,14 +366,15 @@ async function filtrarPessoas(tipo) {
 
 // Adiciona eventos aos botões de filtro (se existirem)
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".botao-filtro").forEach((button) => {
-    button.addEventListener("click", () => {
-      const tipo = button.dataset.tipo;
-      filtrarPessoas(tipo);
+  document.querySelectorAll(".botao-filtro").forEach(botao => {
+    botao.addEventListener("click", () => {
+      const tipo = botao.getAttribute("data-tipo");
+      document.querySelectorAll(".card-grid").forEach(grid => {
+        grid.style.display = grid.id.includes(tipo) ? "grid" : "none";
+      });
     });
-  });
+  }); 
 });
-
 function configurarFiltroTabela() {
   const filtroInput = document.getElementById("filtro-tabela");
   if (filtroInput) {

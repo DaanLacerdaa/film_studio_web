@@ -60,6 +60,9 @@
       <% diretores.forEach(diretor => { %>
       <div class="card">
         <h2><%= diretor.nome %></h2>
+        <div class="person-photo">
+          <img src="<%= diretor.imagem || '/images/default-person.jpg' %>" alt="Foto de <%= diretor.nome %>">
+        </div>
         <p>
           <strong>Data de Nascimento:</strong> <%= diretor.data_nascimento %>
         </p>

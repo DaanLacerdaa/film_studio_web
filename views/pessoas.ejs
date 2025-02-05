@@ -50,29 +50,35 @@
 
       <h2>Atores</h2>
       <div 
-      id="atores-container"
-      class="card-grid"
-      data-atores="<%= JSON.stringify(atores).replace(/"/g, '&quot;') %>">
-    </div>
+        id="atores-container"
+        class="card-grid"
+        data-tipo="ator"
+        data-atores="<%= JSON.stringify(atores).replace(/"/g, '&quot;') %>">
+      </div>
 
-    <div 
-    id="diretores-container"
-    class="card-grid"
-    data-diretores="<%= JSON.stringify(diretores).replace(/"/g, '&quot;') %>">
-  </div>
+      <h2>Diretores</h2>
+      <div 
+        id="diretores-container"
+        class="card-grid"
+        data-tipo="diretor"
+        data-diretores="<%= JSON.stringify(diretores).replace(/"/g, '&quot;') %>">
+      </div>
 
       <h2>Produtores</h2>
-      <div
+      <div 
         id="produtores-container"
         class="card-grid"
-        data-produtores="<%= JSON.stringify(pessoas.produtores || []).replace(/"/g, '&quot;') %>"
-      ></div>
+        data-tipo="produtor"
+        data-produtores="<%= JSON.stringify(pessoas.produtores || []).replace(/"/g, '&quot;') %>">
+      </div>
+
     </main>
 
     <h2>Filtrar Pessoas</h2>
-<button class="botao-filtro" data-tipo="ator">Atores</button>
-<button class="botao-filtro" data-tipo="diretor">Diretores</button>
-<button class="botao-filtro" data-tipo="produtor">Produtores</button>
+    <button class="botao-filtro" data-tipo="ator">Atores</button>
+    <button class="botao-filtro" data-tipo="diretor">Diretores</button>
+    <button class="botao-filtro" data-tipo="produtor">Produtores</button>
+    
 
 <ul id="lista-pessoas">
   <% Object.keys(pessoas).forEach(tipo => { %>
@@ -89,7 +95,7 @@
         </li>
       <% } %>
     </ul>
-    
+  <% }) %>
 
     <%- include('partials/toggle') %>
   </body>

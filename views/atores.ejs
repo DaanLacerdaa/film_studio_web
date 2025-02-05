@@ -59,6 +59,9 @@
       <% atores.forEach(ator => { %>
       <div class="card">
         <h2><%= ator.nome %></h2>
+        <div class="person-photo">
+          <img src="<%= ator.imagem || '/images/default-person.jpg' %>" alt="Foto de <%= ator.nome %>">
+        </div>
         <p><strong>Data de Nascimento:</strong> <%= ator.data_nascimento %></p>
         <p><strong>Sexo:</strong> <%= ator.sexo %></p>
         <p><strong>Nacionalidade:</strong> <%= ator.nacionalidade %></p>

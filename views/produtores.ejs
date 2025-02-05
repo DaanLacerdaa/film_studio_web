@@ -57,6 +57,9 @@
       <% produtores.forEach(produtor => { %>
       <div class="card">
         <h2><%= produtor.nome %></h2>
+        <div class="person-photo">
+          <img src="<%= produtor.imagem || '/images/default-person.jpg' %>" alt="Foto de <%= produtor.nome %>">
+        </div>
         <p>
           <strong>Data de Nascimento:</strong> <%= produtor.data_nascimento %>
         </p>
