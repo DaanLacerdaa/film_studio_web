@@ -210,23 +210,34 @@ async function buscarImagemPessoa(nome) {
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-  document.querySelectorAll("[data-pessoas]").forEach(container => {
+  document.querySelectorAll("[data-pessoas]").forEach(async (container) => {
     const tipo = container.getAttribute("data-tipo"); // Obtém o tipo (atores, diretores, produtores)
     const pessoas = JSON.parse(container.getAttribute("data-pessoas") || "[]");
 
-    container.innerHTML = pessoas.map(pessoa => `
-      <div class="card">
-        <h2>${pessoa.nome}</h2>
-        <div class="person-photo">
-          <img src="${pessoa.imagem || '/images/default-person.jpg'}" alt="Foto de ${pessoa.nome}">
+    // Buscar imagens para todas as pessoas de forma assíncrona
+    for (let pessoa of pessoas) {
+      pessoa.imagem = await buscarImagemPessoa(pessoa.nome);
+    }
+
+    // Atualizar o HTML com as imagens já carregadas
+    container.innerHTML = pessoas
+      .map(
+        (pessoa) => `
+        <div class="card">
+          <h2>${pessoa.nome}</h2>
+          <div class="person-photo">
+            <img src="${pessoa.imagem}" alt="Foto de ${pessoa.nome}">
+          </div>
+          <p><strong>Data de Nascimento:</strong> ${pessoa.data_nascimento || "Não disponível"}</p>
+          <p><strong>Sexo:</strong> ${pessoa.sexo || "Não informado"}</p>
+          <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "Não disponível"}</p>
         </div>
-        <p><strong>Data de Nascimento:</strong> ${pessoa.data_nascimento || "Não disponível"}</p>
-        <p><strong>Sexo:</strong> ${pessoa.sexo || "Não informado"}</p>
-        <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "Não disponível"}</p>
-      </div>
-    `).join("");
+      `
+      )
+      .join("");
   });
 });
+
 
 
 // ========== 🖼️ FUNÇÕES DE POPUP ==========
