@@ -37,8 +37,8 @@ app.use((req, res) => {
 
 // Habilite CORS para imagens do TMDB
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://image.tmdb.org');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Origin', 'https://image.tmdb.org');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 // Inicialização do servidor
