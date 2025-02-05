@@ -48,9 +48,12 @@
     </style>
   </head>
   <body>
-    <h1>Lista de Diretores</h1>
 
     <%- include('partials/header') %>
+    <main class="container">
+    <h1>Lista de Diretores</h1>
+
+
     <a href="/pessoas/novo">Adicionar Novo Diretor</a>
 
     <div class="card-grid">
@@ -75,7 +78,7 @@
       </div>
       <% }); %>
     </div>
-
+</main>
     <%- include('partials/toggle') %>
   </body>
 </html>

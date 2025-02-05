@@ -60,14 +60,14 @@
       <div
         id="diretores-container"
         class="card-grid"
-        data-diretores="<%= JSON.stringify(pessoas.diretores || []) %>"
+        data-diretores="<%= JSON.stringify(pessoas.diretores || []).replace(/"/g, '&quot;') %>"
       ></div>
 
       <h2>Produtores</h2>
       <div
         id="produtores-container"
         class="card-grid"
-        data-produtores="<%= JSON.stringify(pessoas.produtores || []) %>"
+        data-produtores="<%= JSON.stringify(pessoas.produtores || []).replace(/"/g, '&quot;') %>"
       ></div>
     </main>
 

@@ -8,6 +8,9 @@
   <script src="/js/script.js"></script>
 </head>
 <body>
+  <%- include('partials/header') %>
+  <main class="container">
+    
   <h1><%= ator ? 'Editar Pessoa' : 'Adicionar Pessoa' %></h1>
   <form action="<%= ator ? '/pessoas/editar/' + ator.id : '/pessoas' %>" method="POST">
     <label for="nome">Nome:</label>

@@ -8,6 +8,8 @@
   <script src="/js/script.js"></script>
 </head>
 <body>
+  <%- include('partials/header') %>
+  <main class="container">
   <h1><%= pessoa ? 'Editar Pessoa' : 'Adicionar Pessoa' %></h1>
   <form action="<%= pessoa ? '/atores/editar/' + pessoa.id : '/atores' %>" method="POST">
     <label for="nome">Nome:</label>
@@ -41,7 +43,7 @@
 
     <button type="submit">Salvar</button>
   </form>
-
+</main>
   <%- include('partials/toggle') %>
 
 </body>

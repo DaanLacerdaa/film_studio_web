@@ -8,6 +8,8 @@
     <script src="/js/script.js"></script>
 </head>
 <body>
+  <%- include('partials/header') %>
+  <main class="container">
   <h1><%= diretor ? 'Editar Diretor' : 'Adicionar Diretor' %></h1>
   <form action="<%= diretor ? '/pessoas/editar/' + diretor.id : '/pessoas' %>" method="POST">
     <label for="nome">Nome:</label>
@@ -28,7 +30,7 @@
     <br>
     <button type="submit">Salvar</button>
   </form>
-
+  </main>
   <%- include('partials/toggle') %>
 
 </body>
