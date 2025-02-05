@@ -3,6 +3,7 @@ const router = express.Router();
 const Filme = require("../models/filme");
 const Pessoa = require("../models/pessoa");
 const Atuacao = require("../models/atuacao");
+const { buscarFilme } = require("../utils/api")
 
 // Listar todos os filmes
 router.get("/", async (req, res) => {
@@ -150,5 +151,36 @@ router.post("/deletar/:id", async (req, res) => {
     res.status(500).send("Erro ao deletar o filme");
   }
 });
+
+// Criar um novo filme com dados externos
+router.post("/", async (req, res) => {
+  const { titulo, duracao, idioma, diretor_id, produtores } = req.body;
+
+  try {
+    // Buscar informações externas sobre o filme
+    const dadosExternos = await buscarFilme(titulo);
+
+    const filme = await Filme.create({
+      titulo,
+      duracao,
+      idioma,
+      diretor_id,
+      campo_imagem: dadosExternos.posterPath, // Salva a URL da imagem no banco
+    });
+
+    // Adicionar produtores ao filme (verificação extra)
+    if (produtores && Array.isArray(produtores) && produtores.length > 0) {
+      await filme.setProdutores(produtores);
+    }
+
+    res.redirect("/filmes");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao criar o filme");
+  }
+});
+
+
+
 
 module.exports = router;

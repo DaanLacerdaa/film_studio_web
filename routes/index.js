@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Pessoa, Filme } = require("../models");
-
+const { buscarFilme } = require("../utils/api");
 // Rota unificada para listar pessoas
 router.get("/pessoas", async (req, res) => {
   try {
