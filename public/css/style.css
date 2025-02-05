@@ -1,34 +1,4 @@
-/* Fontes customizadas */
-@font-face {
-  font-family: "Cinema";
-  src: url("../../fonts/cinematografica-regular.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "broadway";
-  src: url("../../fonts/Broadway.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-/* Variáveis de tema */
-:root {
-  /* Dark Theme Default */
-  --bg-color: #e50914
-  --text-color: #f0f0f0;
-  --primary-color: #e50914;
-  --hover-color: #b20710;
-  --table-bg: #2a2a2a;
-  --table-header: #e50914;
-  --form-bg: #2a2a2a;
-  --input-bg: #1a1a1a;
-  --border-color: #444;
-  --nav-bg: rgba(51, 51, 51, 0.9);
-  --footer-bg: #121212;
-}
-/* ========== TOGGLE CINEMATOGRÁFICO ========== */
+/* ========== TOGGLE REVISADO ========== */
 #switch {
   position: fixed;
   right: 20px;
@@ -36,562 +6,108 @@
   width: 80px;
   height: 40px;
   border-radius: 40px;
-  background: var(--bg-color);
   border: 3px solid var(--primary-color);
+  background: var(--bg-color);
   box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
-  transition: all 0.4s ease;
   cursor: pointer;
   z-index: 1000;
   overflow: hidden;
-}
-
-/* Esconder input checkbox */
-#tema-toggle {
-  display: none;
-}
-
-/* SLIDER (área de clique do botão) */
-.slider {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  height: 100%;
-  border-radius: 40px;
-  transition: background 0.4s ease;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 5px;
-}
-
-/* ÍCONE DA CLAQUETE */
-#claquete {
-  width: 30px;
-  height: 30px;
-  background: var(--primary-color);
-  border-radius: 50%;
   transition: all 0.4s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-}
-
-#claquete::before {
-  content: "🎬";
-}
-
-/* FILME + ELEMENTOS TEMÁTICOS */
-#film-elements {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-.film-strip {
-  position: absolute;
-  width: 120%;
-  height: 12px;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--primary-color) 0px,
-    var(--primary-color) 8px,
-    transparent 8px,
-    transparent 16px
-  );
-  opacity: 0.3;
-  animation: filmScroll 6s linear infinite;
-}
-
-/* ANIMAÇÃO DA PIPOCA */
-.popcorn {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #ffd700;
-  clip-path: polygon(
-    50% 0%,
-    60% 30%,
-    100% 50%,
-    60% 70%,
-    50% 100%,
-    40% 70%,
-    0% 50%,
-    40% 30%
-  );
-  opacity: 0;
-  transition: all 0.5s ease;
-}
-
-/* === TEMAS === */
-[data-theme="dark"] #switch {
-  background: #0a0a0a;
-  border-color: #e50914;
-}
-
-[data-theme="dark"] .popcorn {
-  opacity: 1;
-  animation: popcornJump 1.5s ease-in-out infinite;
-}
-
-[data-theme="dark"] .film-strip {
-  opacity: 0.5;
-}
-
-/* Light Mode (Modo Clássico) */
-[data-theme="light"] #switch {
-  background: #f5f5f5;
-  border-color: #b20710;
-}
-
-[data-theme="light"] #claquete {
-  background: #b20710;
-}
-
-[data-theme="light"] .film-strip {
-  background: repeating-linear-gradient(
-    90deg,
-    #b20710 0px,
-    #b20710 8px,
-    transparent 8px,
-    transparent 16px
-  );
-  opacity: 0.2;
-}
-
-/* === ANIMAÇÕES === */
-@keyframes filmScroll {
-  from {
-    transform: translateX(-20%);
-  }
-  to {
-    transform: translateX(20%);
-  }
-}
-
-@keyframes popcornJump {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-
-  
-
-/* === ANIMAÇÕES === */
-@keyframes filmScroll {
-  from {
-    transform: translateX(-20%);
-  }
-  to {
-    transform: translateX(20%);
-  }
-}
-
-@keyframes popcornJump {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-/* === TOGGLE INTERATIVO === */
-#tema-toggle:checked + .slider + #contentwrapper #claquete {
-  left: calc(100% - 35px);
-  background: var(--hover-color);
-  transform: translateX(40px);
-
-
-}
-
-[data-theme="light"] {
-  --bg-color: #f5f5f5;
-  --text-color: #333;
-  --primary-color: #e50914;
-  --hover-color: #b20710;
-  --table-bg: #ffffff;
-  --table-header: #e50914;
-  --form-bg: #ffffff;
-  --input-bg: #f5f5f5;
-  --border-color: #ddd;
-  --nav-bg: rgba(245, 245, 245, 0.9);
-  --footer-bg: #e0e0e0;
-}
-
-/* Estilos gerais */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Goudy Bookletter 1911", sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-h1,
-h2 {
-  text-align: center;
-  margin: 20px 0;
-  font-family: "Cinema", serif;
-  color: var(--primary-color);
-}
-
-/* Toggle Cinematográfico Dark/Light */
-#switch {
-  position: fixed;
-  width: 60px;
-  height: 20px;
-  right: 30px;
-  top: 20px;
-  border-radius: 40px;
-  background: var(--bg-color);
-  border: 3px solid var(--primary-color);
-  box-shadow: 0 0 25px rgba(229, 9, 20, 0.3);
-  transition: all 0.5s ease;
-  z-index: 1000;
-  cursor: pointer;
 }
 
 #contentwrapper {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  border-radius: 40px;
 }
 
-/* Claquete - Ícone Central */
-#claquete {
+#tema-toggle {
+  display: none;
+}
+
+.slider {
   position: absolute;
-  width: 60px;
-  height: 60px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  width: 34px;
+  height: 34px;
   background: var(--primary-color);
   border-radius: 50%;
-  transition: all 0.5s ease;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#tema-toggle:checked + .slider {
+  left: calc(100% - 37px);
+  background: var(--hover-color);
 }
 
 #claquete::before {
   content: "🎬";
+  font-size: 24px;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+}
+
+#film-elements {
   position: absolute;
-  font-size: 30px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Elementos Temáticos */
-.film-strip {
-  position: absolute;
-  width: 120%;
-  height: 15px;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--primary-color) 0px,
-    var(--primary-color) 10px,
-    transparent 10px,
-    transparent 20px
-  );
-  opacity: 0.3;
-  animation: filmScroll 5s linear infinite;
-}
-
-.popcorn {
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  background: #ffd700;
-  clip-path: polygon(
-    50% 0%,
-    60% 30%,
-    100% 50%,
-    60% 70%,
-    50% 100%,
-    40% 70%,
-    0% 50%,
-    40% 30%
-  );
-  opacity: 0;
-  transition: all 0.5s ease;
-}
-
-/* Dark Mode (Modo Cinema) */
-[data-theme="dark"] #switch {
-  background: #0a0a0a;
-  border-color: #e50914;
-}
-
-[data-theme="dark"] .popcorn {
-  opacity: 1;
-  animation: popcornJump 1.5s ease-in-out infinite;
-}
-
-[data-theme="dark"] .film-strip {
-  opacity: 0.5;
-}
-
-/* Light Mode (Modo Clássico) */
-[data-theme="light"] #switch {
-  background: #f5f5f5;
-  border-color: #b20710;
-}
-
-[data-theme="light"] #claquete {
-  background: #b20710;
-}
-
-[data-theme="light"] .film-strip {
-  background: repeating-linear-gradient(
-    90deg,
-    #b20710 0px,
-    #b20710 10px,
-    transparent 10px,
-    transparent 20px
-  );
-  opacity: 0.2;
-}
-
-/* Animações */
-@keyframes filmScroll {
-  from {
-    transform: translateX(-20%);
-  }
-  to {
-    transform: translateX(20%);
-  }
-}
-
-@keyframes popcornJump {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-/* Navegação e Menu Dropdown */
-nav {
-  background: var(--nav-bg);
-  padding: 1rem;
-  position: relative;
-  z-index: 999;
-  backdrop-filter: blur(10px);
-}
-/* Popup para fotos de pessoas */
-.image-popup {
-  display: none;
-  position: absolute;
-  background: rgba(0, 0, 0, 0.9);
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-}
-
-.image-popup img {
-  max-width: 150px;
-  height: auto;
-  border-radius: 8px;
-}
-
-.menu {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: 2rem;
-}
-.placeholder-image {
-  height: 200px;
-  background: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  border-radius: 4px;
-}
-.movie-poster {
-  min-height: 450px;
-  background: #f0f0f0 url("/images/loading.gif") no-repeat center;
-  object-fit: cover;
-}
-
-.movie-poster[src*="default-movie"] {
-  object-fit: contain;
-  padding: 20px;
-}
-.movie-cover img {
   width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-.menu > li {
-  position: relative;
+  height: 100%;
+  pointer-events: none;
 }
 
-.menu a {
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.menu a:hover {
-  background: var(--primary-color);
-}
-
-/* Submenu */
-.menu ul {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: var(--nav-bg);
-  min-width: 200px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  padding: 0.5rem;
-}
-
-.menu ul li {
-  margin: 0.5rem 0;
-}
-
-.menu li:hover .submenu {
-  display: block;
-}
-
-/* Correção do Toggle */
-#switch.clicked {
-  transform: scale(0.95);
-  box-shadow: 0 0 15px var(--primary-color);
-}
-
-/* Garantir que o tema está aplicado em todos os elementos */
-body,
-nav,
-footer,
-table,
+/* ========== FORMULÁRIOS ========== */
 form {
-  background-color: var(--bg-color);
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--form-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
   color: var(--text-color);
+  font-family: "Cinema", serif;
 }
 
-/* Responsividade */
-@media screen and (max-width: 768px) {
-  table {
-    width: 100%;
-    font-size: 14px;
-  }
-
-  form {
-    width: 90%;
-    padding: 15px;
-  }
-
-  .menu {
-    flex-direction: column;
-    padding: 10px;
-  }
-
-  .menu > li {
-    margin: 5px 0;
-  }
-
-  #switch {
-    top: 10px;
-    right: 10px;
-    width: 140px;
-    height: 60px;
-  }
+input, textarea, select {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--input-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-color);
+  transition: border-color 0.3s ease;
 }
 
-/* Estilos para navegação */
-nav {
-  background: var(--nav-bg);
-  padding: 1rem;
-  margin-bottom: 2rem;
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(229, 9, 20, 0.2);
 }
 
-.menu {
-  display: flex;
-  gap: 2rem;
+/* ========== MENU SEM MARCADORES ========== */
+.menu, .submenu {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.menu > li {
-  position: relative;
+.menu li::before, .submenu li::before {
+  content: none;
 }
 
-.menu a {
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.menu a:hover {
-  background: var(--primary-color);
-  color: white;
-}
-
-.submenu {
-  display: none;
-  position: absolute;
-  background: var(--nav-bg);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  min-width: 200px;
-  padding: 0.5rem;
-  border-radius: 4px;
-  top: 100%;
-  left: 0;
-}
-
-.menu li:hover .submenu {
-  display: block;
-}
-
-/* Botões */
-.btn-primary {
-  display: inline-block;
-  background: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  margin: 1rem 0;
-  transition: background-color 0.3s ease;
-}
-.btn {
-  display: inline-block;
-  background: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  margin: 1rem 0;
-  transition: background-color 0.3s ease;
-}
-.btn-primary:hover {
-  background: var(--hover-color);
-}
-
-/* Estilos gerais */
+/* ========== CORREÇÕES GERAIS ========== */
+/* Remover duplicações */
 body {
   margin: 0;
   padding: 0;
@@ -601,217 +117,53 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Cards */
+/* Unificar estilos de cards */
 .card {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background: var(--card-bg);
+  color: var(--card-text);
+  border: 1px solid var(--card-border);
   padding: 1rem;
-  margin: 1rem;
+  margin: 1rem 0;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
 }
 
-/* Links nos cards e hover */
-.card a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color 0.3s ease;
+/* Otimizar animações */
+@keyframes filmScroll {
+  from { transform: translateX(-20%); }
+  to { transform: translateX(20%); }
 }
 
-.card a:hover {
-  color: var(--hover-color);
+@keyframes popcornJump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
-/* Toggle Cinematográfico Dark/Light */
-#switch {
-  position: fixed;
-  width: 60px;
-  height: 20px;
-  right: 30px;
-  top: 20px;
-  border-radius: 40px;
-  background: var(--bg-color);
-  border: 3px solid var(--primary-color);
-  box-shadow: 0 0 25px rgba(229, 9, 20, 0.3);
-  transition: all 0.5s ease;
-  z-index: 1000;
-  cursor: pointer;
-}
-
-#claquete {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--primary-color);
-  border-radius: 50%;
-  transition: all 0.5s ease;
-}
-
-#claquete::before {
-  content: "🎬";
-  position: absolute;
-  font-size: 30px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Modo Claro e Escuro */
-[data-theme="dark"] {
-  --bg-color: #1a1a1a;
-  --text-color: #f0f0f0;
-  --primary-color: #e50914;
-  --hover-color: #b20710;
-  --table-bg: #2a2a2a;
-  --table-header: #e50914;
-  --form-bg: #2a2a2a;
-  --input-bg: #1a1a1a;
-  --border-color: #444;
-  --nav-bg: rgba(51, 51, 51, 0.9);
-  --footer-bg: #121212;
-}
-
-[data-theme="light"] {
-  --bg-color: #f5f5f5;
-  --text-color: #333;
-  --primary-color: #e50914;
-  --hover-color: #b20710;
-  --table-bg: #ffffff;
-  --table-header: #e50914;
-  --form-bg: #ffffff;
-  --input-bg: #f5f5f5;
-  --border-color: #ddd;
-  --nav-bg: rgba(245, 245, 245, 0.9);
-  --footer-bg: #e0e0e0;
-}
-
-/* Estilos adicionais */
-body,
-nav,
-footer,
-table,
-form {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-/* Responsividade */
-@media screen and (max-width: 768px) {
+/* Responsividade Unificada */
+@media (max-width: 768px) {
   #switch {
-    top: 10px;
-    right: 10px;
-    width: 140px;
-    height: 60px;
+    width: 60px;
+    height: 30px;
+    right: 15px;
+    top: 15px;
   }
-}
-
-/* ========== CORREÇÕES NO TEMA ========== */
-/* Adicionar variáveis específicas para cards */
-:root {
-  --card-bg: #2a2a2a;
-  --card-text: #f0f0f0;
-  --card-border: #444;
-}
-
-[data-theme="light"] {
-  --card-bg: #ffffff;
-  --card-text: #333;
-  --card-border: #ddd;
-}
-
-[data-theme="dark"] {
-  --card-bg:#333 ;
-  --card-text: #ffffff;
-  --card-border: #ddd;
-}
-
-/* Aplicar variáveis nos cards */
-.card {
-  background: var(--card-bg);
-  color: var(--card-text);
-  border: 1px solid var(--card-border);
-  transition: all 0.3s ease; /* Suavizar transição */
-}
-
-/* Garantir contraste nos textos */
-.card h2 {
-  color: var(--primary-color);
-}
-
-/* Ajustar imagens nos cards */
-.movie-cover img {
-  border: 2px solid var(--primary-color);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Botões de ação */
-.actions a {
-  background: var(--primary-color);
-  color: white !important;
-  border: 1px solid var(--hover-color);
-}
-.actions btn {
-  background: var(--primary-color);
-  color: white !important;
-  border: 1px solid var(--hover-color);
-}
-
-.actions button {
-  background: var(--card-bg);
-  color: var(--card-text);
-  border: 1px solid var(--card-border);
-}
-
-/* ========== NOVO TOGGLE STYLE ========== */
-.theme-switch {
-  position: fixed;
-  right: 20px;
-  top: 20px;
-  z-index: 1000;
-}
-
-.slider {
-  position: relative;
-  display: block;
-  width: 60px;
-  height: 30px;
-  background: var(--card-bg);
-  border: 2px solid var(--primary-color);
-  border-radius: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.theme-icon {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  transition: all 0.3s ease;
-}
-
-.theme-icon:first-child {
-  left: 5px;
-  opacity: 1;
-}
-
-.theme-icon:last-child {
-  right: 5px;
-  opacity: 0;
-}
-
-#tema-toggle:checked + .slider {
-  background: var(--primary-color);
-}
-
-#tema-toggle:checked + .slider .theme-icon:first-child {
-  opacity: 0;
-}
-
-#tema-toggle:checked + .slider .theme-icon:last-child {
-  opacity: 1;
+  
+  .slider {
+    width: 24px;
+    height: 24px;
+  }
+  
+  #tema-toggle:checked + .slider {
+    left: calc(100% - 28px);
+  }
+  
+  #claquete::before {
+    font-size: 18px;
+  }
+  
+  form {
+    margin: 1rem;
+    padding: 1rem;
+  }
 }
