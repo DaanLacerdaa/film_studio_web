@@ -1,0 +1,25 @@
+* [33mda21840[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Revert "UPDATES GERAIS"
+* [33mebbb68d[m UPDATES GERAIS
+* [33mb98f85d[m refatora importação da função buscarFilme para o módulo utils
+* [33me54645c[m move função buscarFilme para novo módulo e atualiza implementação
+* [33m164b8cc[m adiciona tratamento de erro para imagens de pessoas e refatora função de busca de filme para novo módulo
+* [33mdd9ffe4[m refatora importação da função buscarFilme e melhora comentário sobre a URL da imagem
+* [33mef8af83[m adiciona rota para criar um novo filme com dados externos
+* [33m7c69d43[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m lista pessoas agrupadas por tipo e refatora renderização no cabeçalho
+* [33m9fb4fd5[m adiciona submenu para a seção de filmes no cabeçalho
+* [33m04c227f[m adiciona submenu para a seção de filmes no cabeçalho
+* [33m7e2a3af[m altera a propriedade 'atores' para 'elenco' na rota de filmes e refatora o cabeçalho para melhorar a estrutura do HTML
+* [33m807daa2[m altera a propriedade 'atores' para 'elenco' no script.js para melhorar a consistência dos dados
+* [33m5e78f72[m remove relacionamentos diretos entre os modelos Filme e Pessoa para simplificar a estrutura do código
+* [33m9a3c906[m refatora o modelo Atuacao para utilizar classes e melhorar a legibilidade, além de corrigir referências aos modelos Filme e Pessoa
+* [33m13241dd[m adiciona importações de Pessoa e Filme no modelo Atuacao para melhorar a estrutura do código
+* [33m029a25e[m refatora relacionamentos nos modelos Filme, Pessoa, Atuacao e Producao para melhorar a legibilidade e consistência do código
+* [33m971e15a[m corrige a capitalização dos modelos de atuação e produção para manter a consistência no projeto
+* [33m5b884a4[m corrige a capitalização dos nomes dos arquivos de modelo para manter a consistência no projeto
+* [33m79d4523[m Refatora relacionamentos no modelo Filme para melhorar a legibilidade e consistência do código.
+* [33mdacced9[m Refatora modelos de Filme e Pessoa para utilizar classes e métodos init do Sequelize, melhorando a estrutura e legibilidade do código.
+* [33m48dfc5f[m Corrige a capitalização dos nomes dos arquivos de modelo para manter a consistência no projeto.
+* [33m2f3a605[m Refatora modelos de atuação e produção, removendo o modelo de filme_produtor e ajustando relacionamentos. Adiciona validação para garantir que apenas produtores possam ser inseridos na produção.
+* [33m0c6e2b9[m Adiciona funcionalidade de filtro para listar pessoas e melhora a estrutura do cabeçalho
+* [33m8c8331c[m envio inicial
+* [33m6d52236[m Update inicial de envio de arquivos
