@@ -33,10 +33,7 @@ Filme.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    campo_imagem: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    
     diretor_id: {
       type: DataTypes.INTEGER,
       allowNull: false,

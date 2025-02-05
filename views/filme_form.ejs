@@ -15,7 +15,7 @@
     <label for="titulo">Título:</label>
     <input type="text" id="titulo" name="titulo" value="<%= filme ? filme.titulo : '' %>" required><br><br>
     <label for="ano_lancamento">Ano de Lançamento:</label>
-    <input type="interger" id="ano_lancamento" name="ano_lancamento" value="<%= filme ? filme.ano_lancamento : '' %>" required><br><br>
+    <input type="number" id="ano_lancamento" name="ano_lancamento" value="<%= filme ? filme.ano_lancamento : '' %>" required>
     <label for="duracao">Duração:</label>
     <input type="text" id="duracao" name="duracao" value="<%= filme ? filme.duracao : '' %>" required><br><br>
     <label for="genero">Gênero:</label>

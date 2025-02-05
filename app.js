@@ -3,6 +3,9 @@ const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 
+
+app.use(express.urlencoded({ extended: true }));
+
 // Importando as rotas unificadas de filmes e pessoas
 const filmesRoutes = require("./routes/filmes");
 const pessoasRoutes = require("./routes/pessoas"); // Rota unificada para atores, diretores e produtores
