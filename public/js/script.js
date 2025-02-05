@@ -240,6 +240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
+
 // ========== 🖼️ FUNÇÕES DE POPUP ==========
 function configurarPopups() {
   let popupAtivo = null;
