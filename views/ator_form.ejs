@@ -10,41 +10,41 @@
 <body>
   <%- include('partials/header') %>
   <main class="container">
-    
-  <h1><%= ator ? 'Editar Pessoa' : 'Adicionar Pessoa' %></h1>
-  <form action="<%= ator ? '/pessoas/editar/' + ator.id : '/pessoas' %>" method="POST">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" value="<%= ator ? ator.nome : '' %>" required>
-    <br>
+      
+    <h1><%= ator ? 'Editar Pessoa' : 'Adicionar Pessoa' %></h1>
+    <form action="<%= ator ? '/pessoas/editar/' + ator.id : '/pessoas' %>" method="POST">
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" value="<%= ator ? ator.nome : '' %>" required>
+      <br>
 
-    <label for="data_nascimento">Data de Nascimento:</label>
-    <input type="date" id="data_nascimento" name="data_nascimento" value="<%= ator ? ator.data_nascimento : '' %>" required>
-    <br>
+      <label for="data_nascimento">Data de Nascimento:</label>
+      <input type="date" id="data_nascimento" name="data_nascimento" value="<%= ator ? ator.data_nascimento : '' %>" required>
+      <br>
 
-    <label for="sexo">Sexo:</label>
-    <select id="sexo" name="sexo" required>
-      <option value="Masculino" <%= ator && ator.sexo === 'Masculino' ? 'selected' : '' %>>Masculino</option>
-      <option value="Feminino" <%= ator && ator.sexo === 'Feminino' ? 'selected' : '' %>>Feminino</option>
-      <option value="Outro" <%= ator && ator.sexo === 'Outro' ? 'selected' : '' %>>Outro</option>
-    </select>
-    <br>
+      <label for="sexo">Sexo:</label>
+      <select id="sexo" name="sexo" required>
+        <option value="Masculino" <%= ator && ator.sexo === 'Masculino' ? 'selected' : '' %>>Masculino</option>
+        <option value="Feminino" <%= ator && ator.sexo === 'Feminino' ? 'selected' : '' %>>Feminino</option>
+        <option value="Outro" <%= ator && ator.sexo === 'Outro' ? 'selected' : '' %>>Outro</option>
+      </select>
+      <br>
 
-    <label for="nacionalidade">Nacionalidade:</label>
-    <input type="text" id="nacionalidade" name="nacionalidade" value="<%= ator ? ator.nacionalidade : '' %>" required>
-    <br>
+      <label for="nacionalidade">Nacionalidade:</label>
+      <input type="text" id="nacionalidade" name="nacionalidade" value="<%= ator ? ator.nacionalidade : '' %>" required>
+      <br>
 
-    <!-- Campo para selecionar o tipo de pessoa (Ator, Diretor, Produtor) -->
-    <label for="tipo">Tipo de Pessoa:</label>
-    <select id="tipo" name="tipo" required>
-      <option value="Ator" <%= ator && ator.tipo === 'Ator' ? 'selected' : '' %>>Ator</option>
-      <option value="Diretor" <%= ator && ator.tipo === 'Diretor' ? 'selected' : '' %>>Diretor</option>
-      <option value="Produtor" <%= ator && ator.tipo === 'Produtor' ? 'selected' : '' %>>Produtor</option>
-    </select>
-    <br>
+      <!-- Campo para selecionar o tipo de pessoa (Ator, Diretor, Produtor) -->
+      <label for="tipo">Tipo de Pessoa:</label>
+      <select id="tipo" name="tipo" required>
+        <option value="Ator" <%= ator && ator.tipo === 'Ator' ? 'selected' : '' %>>Ator</option>
+        <option value="Diretor" <%= ator && ator.tipo === 'Diretor' ? 'selected' : '' %>>Diretor</option>
+        <option value="Produtor" <%= ator && ator.tipo === 'Produtor' ? 'selected' : '' %>>Produtor</option>
+      </select>
+      <br>
 
-    <button type="submit">Salvar</button>
+      <button type="submit">Salvar</button>
   </form>
-
+  </main>
   <%- include('partials/toggle') %>
 
 </body>

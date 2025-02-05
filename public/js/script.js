@@ -178,34 +178,37 @@ async function buscarFilme(titulo) {
     return null;
   }
 }
+// Modifique a função buscarImagemPessoa
 async function buscarImagemPessoa(nome) {
   const apiKey = "50c08b07f173158a7370068b082b9294";
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nome)}`
+      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nome)}&include_adult=false`
     );
 
     const data = await response.json();
 
-    console.log(`🔍 Buscando imagem para: ${nome}`, data);
-
-    if (!data.results || data.results.length === 0) {
-      console.warn(`⚠️ Nenhuma pessoa encontrada para ${nome}.`);
+    // Verificação mais robusta dos resultados
+    if (!data.results?.length) {
+      console.warn(`Nenhum resultado para: ${nome}`);
       return "/images/default-person.jpg";
     }
 
-    // Tenta encontrar a primeira pessoa com profile_path válido
-    const pessoaComImagem = data.results.find(pessoa => pessoa.profile_path);
+    // Seleciona o primeiro resultado relevante
+    const pessoa = data.results[0];
     
-    if (!pessoaComImagem) {
-      console.warn(`⚠️ Nenhuma imagem disponível para ${nome}.`);
+    // Verifica se há uma imagem válida
+    if (!pessoa.profile_path) {
+      console.warn(`Sem imagem para: ${nome}`);
       return "/images/default-person.jpg";
     }
 
-    return `https://image.tmdb.org/t/p/w500${pessoaComImagem.profile_path}`;
+    // Corrige a construção da URL
+    return `https://image.tmdb.org/t/p/w276_and_h350_face${pessoa.profile_path}`;
+
   } catch (error) {
-    console.error("❌ Erro ao buscar imagem:", error);
+    console.error("Erro na busca de imagem:", error);
     return "/images/default-person.jpg";
   }
 }

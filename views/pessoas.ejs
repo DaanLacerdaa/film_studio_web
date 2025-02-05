@@ -49,19 +49,17 @@
       <a href="/pessoas/novo" class="btn">Adicionar Nova Pessoa</a>
 
       <h2>Atores</h2>
-      <div
-        id="atores-container"
-        class="card-grid"
-        data-atores="<%- JSON.stringify(pessoas.atores || []).replace(/"/g, '&quot;') %>"
+      <div 
+      id="atores-container"
+      class="card-grid"
+      data-atores="<%= JSON.stringify(atores).replace(/"/g, '&quot;') %>">
+    </div>
 
-      ></div>
-
-      <h2>Diretores</h2>
-      <div
-        id="diretores-container"
-        class="card-grid"
-        data-diretores="<%= JSON.stringify(pessoas.diretores || []).replace(/"/g, '&quot;') %>"
-      ></div>
+    <div 
+    id="diretores-container"
+    class="card-grid"
+    data-diretores="<%= JSON.stringify(diretores).replace(/"/g, '&quot;') %>">
+  </div>
 
       <h2>Produtores</h2>
       <div

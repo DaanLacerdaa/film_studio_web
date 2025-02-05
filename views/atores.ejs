@@ -50,10 +50,13 @@
   <body>
   
     <%- include('partials/header') %>
-    <h1>Lista de Atores</h1>
-    <a href="/pessoas/novo">Adicionar Novo Ator</a>
-
-    <div class="card-grid">
+    <main class="container">
+      <h1>Lista de Atores</h1>
+      <a href="/pessoas/novo" class="btn">Adicionar Novo Ator</a>
+    
+      <div id="atores-container" class="card-grid"
+           data-atores="<%= JSON.stringify(atores).replace(/"/g, '&quot;') %>">
+           
       <% atores.forEach(ator => { %>
       <div class="card">
         <h2><%= ator.nome %></h2>
