@@ -178,7 +178,6 @@ async function buscarFilme(titulo) {
     return null;
   }
 }
-
 async function buscarImagemPessoa(nome) {
   const apiKey = "50c08b07f173158a7370068b082b9294";
 
@@ -191,12 +190,20 @@ async function buscarImagemPessoa(nome) {
 
     console.log(`🔍 Buscando imagem para: ${nome}`, data);
 
-    if (!data.results || data.results.length === 0 || !data.results[0].profile_path) {
-      console.warn(`⚠️ Nenhuma imagem encontrada para ${nome}.`);
+    if (!data.results || data.results.length === 0) {
+      console.warn(`⚠️ Nenhuma pessoa encontrada para ${nome}.`);
       return "/images/default-person.jpg";
     }
 
-    return `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`;
+    // Tenta encontrar a primeira pessoa com profile_path válido
+    const pessoaComImagem = data.results.find(pessoa => pessoa.profile_path);
+    
+    if (!pessoaComImagem) {
+      console.warn(`⚠️ Nenhuma imagem disponível para ${nome}.`);
+      return "/images/default-person.jpg";
+    }
+
+    return `https://image.tmdb.org/t/p/w500${pessoaComImagem.profile_path}`;
   } catch (error) {
     console.error("❌ Erro ao buscar imagem:", error);
     return "/images/default-person.jpg";
@@ -204,22 +211,24 @@ async function buscarImagemPessoa(nome) {
 }
 
 
+
 // ========== 🖼️ FUNÇÕES DE POPUP ==========
 function configurarPopups() {
-  document.addEventListener("mouseover", async (e) => {
-    if (e.target.classList.contains("popup-trigger")) {
-      const imgElement = e.target;
-      const popup = criarPopup(imgElement);
-      document.body.appendChild(popup);
-    }
-  });
+  let popupAtivo = null;
 
-  document.addEventListener("mouseout", (e) => {
-    if (e.target.classList.contains("popup-trigger")) {
-      const popup = document.getElementById("image-popup");
-      if (popup) popup.remove();
-    }
-  });
+document.addEventListener("mouseover", async (e) => {
+  if (e.target.classList.contains("popup-trigger") && !popupAtivo) {
+    popupAtivo = criarPopup(e.target);
+    document.body.appendChild(popupAtivo);
+  }
+});
+
+document.addEventListener("mouseout", (e) => {
+  if (popupAtivo) {
+    popupAtivo.remove();
+    popupAtivo = null;
+  }
+});
 }
 
 function criarPopup(imgElement) {
@@ -244,22 +253,52 @@ function posicionarPopup(popup, target) {
 }
 
 // ========== 🛠️ FUNÇÕES UTILITÁRIAS ==========
-function aplicarTema() {
-  const temaSalvo = localStorage.getItem("tema") || "claro";
-  document.documentElement.setAttribute("data-tema", temaSalvo);
-}
+// Função para aplicar o tema armazenado no localStorage
+// ========== 🛠 MELHORIAS NO CONTROLE DE TEMA ==========
 
-function configurarToggleTema() {
+// ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
+
+// Função para aplicar o tema salvo no localStorage
+// ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
+
+// Aplicar tema salvo no localStorage ao carregar
+function aplicarTema() {
+  const temaSalvo = localStorage.getItem("tema") || "dark";
+  document.documentElement.setAttribute("data-theme", temaSalvo);
+
+  // Atualizar o estado do checkbox
   const toggleBtn = document.getElementById("tema-toggle");
   if (toggleBtn) {
-    toggleBtn.addEventListener("click", () => {
-      const temaAtual = document.documentElement.getAttribute("data-tema");
-      const novoTema = temaAtual === "escuro" ? "claro" : "escuro";
-      document.documentElement.setAttribute("data-tema", novoTema);
+    toggleBtn.checked = temaSalvo === "dark";
+  }
+}
+
+// Função para alternar o tema e atualizar o botão
+function configurarToggleTema() {
+  const toggleBtn = document.getElementById("tema-toggle");
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener("change", () => {
+      const novoTema = toggleBtn.checked ? "dark" : "light";
+
+      document.documentElement.setAttribute("data-theme", novoTema);
       localStorage.setItem("tema", novoTema);
+
+      // Mover a claquete ao alternar tema
+      const claquete = document.getElementById("claquete");
+      if (claquete) {
+        claquete.style.left = toggleBtn.checked ? "calc(100% - 35px)" : "5px";
+      }
     });
   }
 }
+
+// Inicializar ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+  aplicarTema();  // Aplica o tema armazenado
+  configurarToggleTema();  // Configura o botão de alternância
+});
+
 
 function configurarMenuDropdown() {
   document.querySelectorAll(".dropdown").forEach((dropdown) => {
@@ -285,6 +324,8 @@ function configurarConfirmacaoExclusao() {
     }
   });
 }
+
+
 
 async function filtrarPessoas(tipo) {
   try {

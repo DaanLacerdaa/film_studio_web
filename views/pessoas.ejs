@@ -52,7 +52,8 @@
       <div
         id="atores-container"
         class="card-grid"
-        data-atores="<%= JSON.stringify(pessoas.atores || []) %>"
+        data-atores="<%- JSON.stringify(pessoas.atores || []).replace(/"/g, '&quot;') %>"
+
       ></div>
 
       <h2>Diretores</h2>
@@ -79,12 +80,18 @@
   <% Object.keys(pessoas).forEach(tipo => { %>
     <li><strong><%= tipo %></strong></li>
     <ul>
-      <% pessoas[tipo].forEach(pessoa => { %>
-        <li><%= pessoa.nome %></li>
-      <% }) %>
+      <% for (let tipo in pessoas) { %>
+        <li>
+          <strong><%= tipo %></strong>
+          <ul>
+            <% pessoas[tipo].forEach(pessoa => { %>
+              <li><%= pessoa.nome %></li>
+            <% }) %>
+          </ul>
+        </li>
+      <% } %>
     </ul>
-  <% }) %>
-</ul>
+    
 
     <%- include('partials/toggle') %>
   </body>
