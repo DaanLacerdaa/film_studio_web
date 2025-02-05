@@ -181,11 +181,8 @@
   }
 }
 
-/* === TOGGLE INTERATIVO === */
-#tema-toggle:checked + .slider #claquete {
-  transform: translateX(40px);
-  background: var(--hover-color);
-}
+
+  
 
 /* === ANIMAÇÕES === */
 @keyframes filmScroll {
@@ -210,6 +207,9 @@
 #tema-toggle:checked + .slider + #contentwrapper #claquete {
   left: calc(100% - 35px);
   background: var(--hover-color);
+  transform: translateX(40px);
+
+
 }
 
 [data-theme="light"] {
