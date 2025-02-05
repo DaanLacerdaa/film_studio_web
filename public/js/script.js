@@ -259,10 +259,6 @@ function posicionarPopup(popup, target) {
 // ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
 
 // Função para aplicar o tema salvo no localStorage
-// ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
-// ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
-
-// Aplicar tema salvo no localStorage ao carregar
 function aplicarTema() {
   const temaSalvo = localStorage.getItem("tema") || "dark";
   document.documentElement.setAttribute("data-theme", temaSalvo);
@@ -274,7 +270,7 @@ function aplicarTema() {
   }
 }
 
-// Função para alternar o tema e atualizar o botão
+// Função para alternar o tema
 function configurarToggleTema() {
   const toggleBtn = document.getElementById("tema-toggle");
 
@@ -285,11 +281,12 @@ function configurarToggleTema() {
       document.documentElement.setAttribute("data-theme", novoTema);
       localStorage.setItem("tema", novoTema);
 
-      // Mover a claquete ao alternar tema
-      const claquete = document.getElementById("claquete");
-      if (claquete) {
-        claquete.style.transform = toggleBtn.checked ? "translateX(40px)" : "translateX(0)";
-      }
+      // Forçar re-render dos elementos
+      document.querySelectorAll('.card').forEach(card => {
+        card.style.display = "none";
+        card.offsetHeight; // Força reflow
+        card.style.display = "block";
+      });
     });
   }
 }
@@ -299,7 +296,6 @@ document.addEventListener("DOMContentLoaded", () => {
   aplicarTema();  // Aplica o tema armazenado
   configurarToggleTema();  // Configura o botão de alternância
 });
-
 
 
 function configurarMenuDropdown() {
