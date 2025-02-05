@@ -260,6 +260,7 @@ function posicionarPopup(popup, target) {
 
 // Função para aplicar o tema salvo no localStorage
 // ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
+// ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
 
 // Aplicar tema salvo no localStorage ao carregar
 function aplicarTema() {
@@ -287,7 +288,7 @@ function configurarToggleTema() {
       // Mover a claquete ao alternar tema
       const claquete = document.getElementById("claquete");
       if (claquete) {
-        claquete.style.left = toggleBtn.checked ? "calc(100% - 35px)" : "5px";
+        claquete.style.transform = toggleBtn.checked ? "translateX(40px)" : "translateX(0)";
       }
     });
   }
@@ -298,6 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
   aplicarTema();  // Aplica o tema armazenado
   configurarToggleTema();  // Configura o botão de alternância
 });
+
 
 
 function configurarMenuDropdown() {
