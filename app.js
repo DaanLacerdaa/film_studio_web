@@ -36,7 +36,7 @@ app.use((req, res) => {
 });
 
 // Inicialização do servidor
-const PORT = 3000;
+const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
 });
