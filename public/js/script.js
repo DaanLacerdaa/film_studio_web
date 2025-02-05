@@ -52,6 +52,8 @@ async function carregarFilmesDoBanco() {
         <p><strong>Rotten Tomatoes:</strong> ${
           filmeDadosExternos?.rottenTomatoes || "N/A"
         }</p>
+        <p><strong>Sinopse:</strong> ${filmeDadosExternos?.sinopse || "Não disponível"}</p>
+
         <div class="movie-cover">
           <img src="${
             filmeDadosExternos?.posterPath || "/images/default-movie.jpg"
@@ -84,39 +86,41 @@ async function carregarPessoasDoBanco() {
       produtores: document.getElementById("produtores-container"),
     };
 
+    function formatarData(data) {
+      if (!data) return "N/A";
+      const [ano, mes, dia] = data.split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+
     for (const [categoria, container] of Object.entries(containers)) {
       if (!container) continue;
 
-      const pessoas = JSON.parse(
-        container.dataset[categoria.toLowerCase()] || "[]"
-      );
+      const pessoas = JSON.parse(container.dataset[categoria.toLowerCase()] || "[]");
       container.innerHTML = "";
 
       for (const pessoa of pessoas) {
         const imgUrl = await buscarImagemPessoa(pessoa.nome);
+        
+        // Verifica se o ator participou de filmes e exibe a relação
+        const filmesParticipados = pessoa.filmes?.map((f) => 
+          `${f.titulo} (${f.Atuacao.is_principal ? "Protagonista" : "Coadjuvante"})`
+        ).join(", ") || "Nenhum filme registrado";
 
         const card = document.createElement("div");
         card.classList.add("card");
+
         card.innerHTML = `
           <h2>${pessoa.nome}</h2>
           <div class="person-photo">
-            <img class="popup-trigger" 
-                 data-nome="${pessoa.nome}" 
-                 src="${imgUrl}" 
-                 alt="Foto de ${pessoa.nome}">
+            <img class="popup-trigger" data-nome="${pessoa.nome}" src="${imgUrl}" alt="Foto de ${pessoa.nome}">
           </div>
-          <p><strong>Data Nasc.:</strong> ${pessoa.data_nascimento || "N/A"}</p>
+          <p><strong>Data Nasc.:</strong> ${formatarData(pessoa.data_nascimento)}</p>
           <p><strong>Sexo:</strong> ${pessoa.sexo || "N/A"}</p>
-          <p><strong>Nacionalidade:</strong> ${
-            pessoa.nacionalidade || "N/A"
-          }</p>
+          <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "N/A"}</p>
+          <p><strong>Filmes:</strong> ${filmesParticipados}</p>
           <div class="actions">
             <a href="/pessoas/editar/${pessoa.id}">Editar</a>
-            <form 
-              action="/pessoas/deletar/${pessoa.id}" 
-              method="POST" 
-              class="delete-form"
-            >
+            <form action="/pessoas/deletar/${pessoa.id}" method="POST" class="delete-form">
               <button type="submit">Deletar</button>
             </form>
           </div>
@@ -129,6 +133,8 @@ async function carregarPessoasDoBanco() {
     console.error("Erro ao carregar pessoas:", error);
   }
 }
+
+
 
 // ========== 🌐 FUNÇÕES DE API ==========
 async function buscarFilme(titulo) {
@@ -163,10 +169,10 @@ async function buscarFilme(titulo) {
         ? `https://image.tmdb.org/t/p/w500${filmeTMDB.poster_path}`
         : dataOMDB.Poster || "/images/default-movie.jpg",
       imdbRating: dataOMDB.imdbRating || "N/A",
-      rottenTomatoes:
-        dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value ||
-        "N/A",
+      rottenTomatoes: dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value || "N/A",
+      sinopse: filmeTMDB.overview || dataOMDB.Plot || "Sinopse não disponível."
     };
+    
   } catch (error) {
     console.error("Erro na busca de filme:", error);
     return null;
@@ -178,20 +184,25 @@ async function buscarImagemPessoa(nome) {
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(
-        nome
-      )}`
+      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nome)}`
     );
 
     const data = await response.json();
-    return data.results?.[0]?.profile_path
-      ? `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`
-      : "/images/default-person.jpg";
+
+    console.log(`🔍 Buscando imagem para: ${nome}`, data);
+
+    if (!data.results || data.results.length === 0 || !data.results[0].profile_path) {
+      console.warn(`⚠️ Nenhuma imagem encontrada para ${nome}.`);
+      return "/images/default-person.jpg";
+    }
+
+    return `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`;
   } catch (error) {
-    console.error("Erro na busca de imagem:", error);
+    console.error("❌ Erro ao buscar imagem:", error);
     return "/images/default-person.jpg";
   }
 }
+
 
 // ========== 🖼️ FUNÇÕES DE POPUP ==========
 function configurarPopups() {

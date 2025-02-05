@@ -50,11 +50,11 @@ router.get("/novo", async (req, res) => {
 
 // Criar um novo filme
 router.post("/", async (req, res) => {
-  const { titulo, duracao, idioma, diretor_id, produtores } = req.body;
+  const { titulo, ano_lancamento, genero, duracao, idioma, diretor_id, produtores } = req.body;
   try {
-    const filme = await Filme.create({ titulo, duracao, idioma, diretor_id });
+    const filme = await Filme.create({ titulo, ano_lancamento, genero, duracao, idioma, diretor_id });
 
-    // Adicionar produtores ao filme (verificação extra)
+    // Adicionar produtores ao filme
     if (produtores && Array.isArray(produtores) && produtores.length > 0) {
       await filme.setProdutores(produtores);
     }
