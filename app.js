@@ -35,6 +35,10 @@ app.use((req, res) => {
   res.status(404).render("erro", { mensagem: "Página não encontrada" });
 });
 
+const cors = require('cors');
+app.use(cors());  // Habilita CORS para todas as origens
+
+
 // Habilite CORS para imagens do TMDB
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'https://image.tmdb.org');

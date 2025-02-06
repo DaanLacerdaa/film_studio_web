@@ -78,6 +78,84 @@ async function carregarFilmesDoBanco() {
   }
 }
 
+
+// ========== 🌐 FUNÇÕES DE API ==========
+async function buscarFilme(titulo) {
+  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
+  const apiKeyOMDB = "ea8906de";
+
+  try {
+    // Primeira busca no TMDB
+    const responseTMDB = await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
+        titulo
+      )}&language=pt-BR`
+    );
+
+    const dataTMDB = await responseTMDB.json();
+    if (!dataTMDB.results?.length) return null;
+
+    const filmeTMDB = dataTMDB.results[0];
+
+    // Busca complementar no OMDB
+    const responseOMDB = await fetch(
+      `https://www.omdbapi.com/?t=${encodeURIComponent(
+        filmeTMDB.original_title
+      )}&apikey=${apiKeyOMDB}`
+    );
+
+    const dataOMDB = await responseOMDB.json();
+
+    return {
+      tituloOriginal: filmeTMDB.original_title,
+      posterPath: filmeTMDB.poster_path
+        ? `https://image.tmdb.org/t/p/w500${filmeTMDB.poster_path}`
+        : dataOMDB.Poster || "/images/default-movie.jpg",
+      imdbRating: dataOMDB.imdbRating || "N/A",
+      rottenTomatoes: dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value || "N/A",
+      sinopse: filmeTMDB.overview || dataOMDB.Plot || "Sinopse não disponível."
+    };
+    
+  } catch (error) {
+    console.error("Erro na busca de filme:", error);
+    return null;
+  }
+}
+// ========== 🌐 FUNÇÕES DE API ==========
+async function buscarImagemPessoa(nome) {
+  const apiKey = "50c08b07f173158a7370068b082b9294"; 
+
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nome)}&include_adult=false`
+    );
+
+    if (!response.ok) throw new Error(`Erro na resposta da API TMDB: ${response.status}`);
+
+    const data = await response.json();
+    
+    console.log(`Resultados da busca para "${nome}":`, data);
+
+    if (!data.results || data.results.length === 0) {
+      console.warn(`Nenhum resultado encontrado para: ${nome}`);
+      return "/images/default-person.jpg"; // Retorna a imagem padrão caso não encontre
+    }
+
+    const pessoa = data.results[0];
+
+    if (!pessoa.profile_path) {
+      console.warn(`Pessoa encontrada, mas sem imagem: ${nome}`);
+      return "/images/default-person.jpg"; // Imagem padrão se não houver `profile_path`
+    }
+
+    return `https://image.tmdb.org/t/p/w500${pessoa.profile_path}`;
+  } catch (error) {
+    console.error("Erro ao buscar imagem:", error);
+    return "/images/default-person.jpg"; // Em caso de erro, retorna a imagem padrão
+  }
+}
+
+
 async function carregarPessoasDoBanco() {
   try {
     const containers = {
@@ -131,84 +209,6 @@ async function carregarPessoasDoBanco() {
     }
   } catch (error) {
     console.error("Erro ao carregar pessoas:", error);
-  }
-}
-
-
-
-// ========== 🌐 FUNÇÕES DE API ==========
-async function buscarFilme(titulo) {
-  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
-  const apiKeyOMDB = "ea8906de";
-
-  try {
-    // Primeira busca no TMDB
-    const responseTMDB = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
-        titulo
-      )}&language=pt-BR`
-    );
-
-    const dataTMDB = await responseTMDB.json();
-    if (!dataTMDB.results?.length) return null;
-
-    const filmeTMDB = dataTMDB.results[0];
-
-    // Busca complementar no OMDB
-    const responseOMDB = await fetch(
-      `https://www.omdbapi.com/?t=${encodeURIComponent(
-        filmeTMDB.original_title
-      )}&apikey=${apiKeyOMDB}`
-    );
-
-    const dataOMDB = await responseOMDB.json();
-
-    return {
-      tituloOriginal: filmeTMDB.original_title,
-      posterPath: filmeTMDB.poster_path
-        ? `https://image.tmdb.org/t/p/w500${filmeTMDB.poster_path}`
-        : dataOMDB.Poster || "/images/default-movie.jpg",
-      imdbRating: dataOMDB.imdbRating || "N/A",
-      rottenTomatoes: dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value || "N/A",
-      sinopse: filmeTMDB.overview || dataOMDB.Plot || "Sinopse não disponível."
-    };
-    
-  } catch (error) {
-    console.error("Erro na busca de filme:", error);
-    return null;
-  }
-}
-// ========== 🌐 FUNÇÕES DE API ==========
-async function buscarImagemPessoa(nome) {
-  const apiKey = "50c08b07f173158a7370068b082b9294"; // Substitua pela sua chave válida
-
-  try {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nome)}&include_adult=false`
-    );
-
-    if (!response.ok) throw new Error(`Erro na resposta da API TMDB: ${response.status}`);
-
-    const data = await response.json();
-    
-    console.log(`Resultados da busca para "${nome}":`, data);
-
-    if (!data.results || data.results.length === 0) {
-      console.warn(`Nenhum resultado encontrado para: ${nome}`);
-      return "/images/default-person.jpg"; // Retorna a imagem padrão caso não encontre
-    }
-
-    const pessoa = data.results[0];
-
-    if (!pessoa.profile_path) {
-      console.warn(`Pessoa encontrada, mas sem imagem: ${nome}`);
-      return "/images/default-person.jpg"; // Imagem padrão se não houver `profile_path`
-    }
-
-    return `https://image.tmdb.org/t/p/w500${pessoa.profile_path}`;
-  } catch (error) {
-    console.error("Erro ao buscar imagem:", error);
-    return "/images/default-person.jpg"; // Em caso de erro, retorna a imagem padrão
   }
 }
 

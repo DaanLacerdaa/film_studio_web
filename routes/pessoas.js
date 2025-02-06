@@ -7,7 +7,7 @@ const { Pessoa } = require("../models");
 router.get("/", async (req, res) => {
   try {
     const pessoas = await Pessoa.findAll({
-      attributes: ["id", "nome", "tipo"],
+      attributes: ["id", "nome", "tipo", "data_nascimento", "sexo","nacionalidade"],
       order: [["tipo", "ASC"], ["nome", "ASC"]],
     });
 
@@ -89,6 +89,8 @@ router.get("/atores", async (req, res) => {
   try {
     const atores = await Pessoa.findAll({ where: { tipo: "Ator" }, order: [["nome", "ASC"]] });
     res.render("atores", { atores });
+   
+
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar atores");
@@ -100,6 +102,8 @@ router.get("/diretores", async (req, res) => {
   try {
     const diretores = await Pessoa.findAll({ where: { tipo: "Diretor" }, order: [["nome", "ASC"]] });
     res.render("diretores", { diretores });
+  
+
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar diretores");
@@ -111,6 +115,7 @@ router.get("/produtores", async (req, res) => {
   try {
     const produtores = await Pessoa.findAll({ where: { tipo: "Produtor" }, order: [["nome", "ASC"]] });
     res.render("produtores", { produtores });
+    
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar produtores");
