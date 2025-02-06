@@ -65,6 +65,8 @@ sequelize.sync({ force: false })
   .then(() => console.log("Banco de dados sincronizado"))
   .catch((err) => console.error("Erro ao sincronizar:", err));
 
+
+  
 module.exports = {
   sequelize,
   ...sequelize.models,

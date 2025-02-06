@@ -1,13 +1,13 @@
 /* Fontes customizadas */
 @font-face {
   font-family: "Cinema";
-  src: url("../../fonts/cinematografica-regular.ttf") format("truetype");
+  src: url("../../fonts/Cinema.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "broadway";
+  font-family: "Broadway";
   src: url("../../fonts/Broadway.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
@@ -593,6 +593,20 @@ nav {
 .btn-primary:hover {
   background: var(--hover-color);
 }
+.btn {
+  background: #dc3545; /* Vermelho */
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #b20710; /* Tom mais escuro para hover */
+}
 
 /* Estilos gerais */
 body {
@@ -620,7 +634,14 @@ body {
 }
 
 
+.card strong {
+  color: var(--text-color);
 
+}
+
+.card p{
+  color: var(--text-color);
+}
 
 /* Links nos cards e hover */
 .card a {
@@ -764,6 +785,7 @@ form {
   border: 1px solid var(--hover-color);
 }
 
+
 .actions button {
   background: var(--card-bg);
   color: var(--card-text);
@@ -842,4 +864,81 @@ form {
   padding: 10px;
   border-radius: 8px;
   backdrop-filter: blur(5px);
+}
+
+/* Estilização dos formulários de Filmes e Pessoas */
+form {
+  background-color: var(--form-bg);
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-top: 10px;
+  color: var(--primary-color);
+  font-family: "Cinema", serif;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 16px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: #fff;
+  font-size: 18px;
+  font-weight:light;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 15px;
+  font-family: "Broadway", sans-serif;
+  
+}
+
+button:hover {
+  background-color: var(--hover-color);
+}
+
+/* Ajuste para os selects múltiplos */
+select[multiple] {
+  height: auto;
+  padding: 10px;
+}
+
+/* Centralizar o container */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Títulos estilizados */
+h1 {
+  text-align: center;
+  font-family: "Cinema", serif;
+  color: var(--primary-color);
+}
+
+
+.cinema-mode .icon {
+    color: #ff5733;
 }

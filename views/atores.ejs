@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Atores</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <script defer src="/js/script.js"></script>
+    <script defersrc="/js/script.js"></script>
     <style>
       .card-grid {
         display: grid;
@@ -30,16 +30,31 @@
       .card .actions {
         margin-top: 10px;
       }
-      .card .actions a,
+      .card .actions a{
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-color);
+        color: #fff;
+        font-size: 18px;
+        font-weight:light;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 15px;
+        font-family: "Broadway", sans-serif;
+      }
       .card .actions button {
         text-decoration: none;
         color: white;
-        background: #007bff;
+        background: #dc3545;
         padding: 5px 10px;
         border-radius: 5px;
         margin: 5px;
         display: inline-block;
       }
+      .card .actions a,
       .card .actions button {
         background: #dc3545;
         border: none;
@@ -66,7 +81,7 @@
         <p><strong>Sexo:</strong> <%= ator.sexo %></p>
         <p><strong>Nacionalidade:</strong> <%= ator.nacionalidade %></p>
         <div class="actions">
-          <a href="/pessoas/editar/<%= ator.id %>">Editar</a>
+          <a href="/pessoas/editar/<%= ator.id %>"> <button>Editar</button></a>
           <form
             action="/pessoas/deletar/<%= ator.id %>"
             method="POST"

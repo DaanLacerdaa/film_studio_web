@@ -31,7 +31,7 @@ const Producao = sequelize.define(
   }
 );
 
-// Validação para PRODUTOR (mantenha se necessário)
+// Validação para PRODUTOR
 Producao.beforeCreate(async (producao) => {
   const pessoa = await sequelize.models.Pessoa.findByPk(producao.pessoa_id);
   if (!pessoa || pessoa.tipo !== "PRODUTOR") {

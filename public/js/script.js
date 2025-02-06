@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   configurarFiltroTabela();
   iniciarAnimacoes();
   configurarPopups();
+  criarCardPessoa();
+  formatarData();
+  gerarDetalhesFilmes();
+  buscarImagemPessoa();
 
   await carregarFilmesDoBanco();
   await carregarPessoasDoBanco();
@@ -122,101 +126,86 @@ async function buscarFilme(titulo) {
   }
 }
 // ========== 🌐 FUNÇÕES DE API ==========
-async function buscarImagemPessoa(nome) {
-  const apiKey = "50c08b07f173158a7370068b082b9294"; 
 
-  try {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(nome)}&include_adult=false`
-    );
 
-    if (!response.ok) throw new Error(`Erro na resposta da API TMDB: ${response.status}`);
+async function carregarPessoasDoBanco() {
+  const categorias = ["atores", "diretores", "produtores"];
+  
+  for (const categoria of categorias) {
+      const container = document.getElementById(`${categoria}-container`);
+      const pessoasData = container.dataset[categoria];
+      if (!pessoasData) continue;
 
-    const data = await response.json();
-    
-    console.log(`Resultados da busca para "${nome}":`, data);
-
-    if (!data.results || data.results.length === 0) {
-      console.warn(`Nenhum resultado encontrado para: ${nome}`);
-      return "/images/default-person.jpg"; // Retorna a imagem padrão caso não encontre
-    }
-
-    const pessoa = data.results[0];
-
-    if (!pessoa.profile_path) {
-      console.warn(`Pessoa encontrada, mas sem imagem: ${nome}`);
-      return "/images/default-person.jpg"; // Imagem padrão se não houver `profile_path`
-    }
-
-    return `https://image.tmdb.org/t/p/w500${pessoa.profile_path}`;
-  } catch (error) {
-    console.error("Erro ao buscar imagem:", error);
-    return "/images/default-person.jpg"; // Em caso de erro, retorna a imagem padrão
+      const pessoas = JSON.parse(pessoasData);
+      for (const pessoa of pessoas) {
+          const imagemPessoa = await buscarImagemPessoa(pessoa.nome);
+          const card = criarCardPessoa(pessoa, imagemPessoa);
+          container.appendChild(card);
+      }
   }
 }
 
+async function buscarImagemPessoa(nome) {
+  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
 
-// ========== 👥 FUNÇÕES DE PESSOAS ==========
-async function carregarPessoasDoBanco() {
   try {
-    const containers = {
-      atores: document.getElementById("atores-container"),
-      diretores: document.getElementById("diretores-container"),
-      produtores: document.getElementById("produtores-container"),
-    };
-
-    const formatarData = (data) => {
-      if (!data) return "N/A";
-      const [ano, mes, dia] = data.split("-");
-      return `${dia}/${mes}/${ano}`;
-    };
-
-    for (const [categoria, container] of Object.entries(containers)) {
-      if (!container) continue;
-
-      const dados = container.dataset[categoria];
-      if (!dados) continue;
-
-      const pessoas = JSON.parse(dados);
-      container.innerHTML = "";
-
-      for (const pessoa of pessoas) {
-        const imgUrl = await buscarImagemPessoa(pessoa.nome);
-        
-        const card = document.createElement("div");
-        card.classList.add("card");
-
-        // Construir lista de filmes
-        const filmesList = pessoa.filmes?.map(f => 
-          `<li>${f.titulo} (${f.Atuacao?.is_principal ? 'Protagonista' : 'Coadjuvante'})</li>`
-        ).join("") || "<li>Nenhum filme registrado</li>";
-
-        card.innerHTML = `
-          <h2>${pessoa.nome}</h2>
-          <div class="person-photo">
-            <img src="${imgUrl}" alt="Foto de ${pessoa.nome}">
-          </div>
-          <p><strong>Data Nasc.:</strong> ${formatarData(pessoa.data_nascimento)}</p>
-          <p><strong>Sexo:</strong> ${pessoa.sexo || "N/A"}</p>
-          <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "N/A"}</p>
-          <details>
-            <summary>Filmes Participados (${pessoa.filmes?.length || 0})</summary>
-            <ul>${filmesList}</ul>
-          </details>
-          <div class="actions">
-            <a href="/pessoas/editar/${pessoa.id}">Editar</a>
-            <form action="/pessoas/deletar/${pessoa.id}" method="POST" class="delete-form">
-              <button type="submit">Deletar</button>
-            </form>
-          </div>
-        `;
-
-        container.appendChild(card);
-      }
-    }
+      const response = await fetch(`https://api.themoviedb.org/3/searchperson?api_key=${apiKeyTMDB}&query=${encodeURIComponent(nome)}`);
+      const data = await response.json();
+      return data.results.length ? `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}` :"images/default-person.jpg";
   } catch (error) {
-    console.error("Erro ao carregar pessoas:", error);
+      console.error("Erro ao buscar imagem da pessoa:", error);
+      return "images/default-person.jpg";
   }
+}
+
+function criarCardFilme(filme, imagem) {
+  const card = document.createElement("div");
+  card.className = "card-filme";
+  card.innerHTML = `
+      <img src="${imagem}" alt="${filme.titulo}">
+      <h3>${filme.titulo}</h3>
+      <p>Lançamento: ${filme.ano_lancamento}</p>
+  `;
+  return card;
+}
+
+function criarCardPessoa(pessoa, imagem) {
+  const card = document.createElement("div");
+  card.className = "card-pessoa";
+  card.innerHTML = `
+      <img src="${imagem}" alt="${pessoa.nome}">
+      <h3>${pessoa.nome}</h3>
+      <p>Data de Nascimento: ${pessoa.data_nascimento || 'Desconhecido'}</p>
+      <p>Sexo: ${pessoa.sexo || 'Desconhecido'}</p> 
+      <p>Nacionalidade: ${pessoa.nacionalidade || 'Desconhecida'}</p>
+      <p>Participações: ${filmes.filmesList || 'Desconhecido'}</p>
+
+  `;
+  return card;
+}
+
+
+// Funções auxiliares
+function formatarData(data) {
+  return data ? new Date(data).toLocaleDateString('pt-BR') : 'N/A';
+}
+
+function gerarDetalhesFilmes(pessoa) {
+  if (!pessoa.filmes?.length) return '';
+  
+  const filmesList = pessoa.filmes.map(f => `
+    <li>
+      ${f.titulo} 
+      <em>(${f.Atuacao?.is_principal ? 'Protagonista' : 'Coadjuvante'})</em>
+    </li>
+  `).join('');
+
+  return `
+    <details>
+      <summary>Participações (${pessoa.filmes.length})</summary>
+      <ul class="filmes-list">${filmesList}</ul>
+    </details>
+  `;
 }
 
 // Atualizar o DOMContentLoaded
