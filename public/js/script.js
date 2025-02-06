@@ -205,7 +205,7 @@ async function buscarImagemPessoa(nome) {
       return "/images/default-person.jpg"; // Imagem padrão se não houver `profile_path`
     }
 
-    return `https://image.tmdb.org/t/p/w276_and_h350_face${pessoa.profile_path}`;
+    return `https://image.tmdb.org/t/p/w500${pessoa.profile_path}`;
   } catch (error) {
     console.error("Erro ao buscar imagem:", error);
     return "/images/default-person.jpg"; // Em caso de erro, retorna a imagem padrão
