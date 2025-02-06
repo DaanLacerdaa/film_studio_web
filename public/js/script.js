@@ -156,6 +156,7 @@ async function buscarImagemPessoa(nome) {
 }
 
 
+// ========== 👥 FUNÇÕES DE PESSOAS ==========
 async function carregarPessoasDoBanco() {
   try {
     const containers = {
@@ -164,38 +165,44 @@ async function carregarPessoasDoBanco() {
       produtores: document.getElementById("produtores-container"),
     };
 
-    function formatarData(data) {
+    const formatarData = (data) => {
       if (!data) return "N/A";
       const [ano, mes, dia] = data.split("-");
       return `${dia}/${mes}/${ano}`;
-    }
+    };
 
     for (const [categoria, container] of Object.entries(containers)) {
       if (!container) continue;
 
-      const pessoas = JSON.parse(container.dataset[categoria.toLowerCase()] || "[]");
+      const dados = container.dataset[categoria];
+      if (!dados) continue;
+
+      const pessoas = JSON.parse(dados);
       container.innerHTML = "";
 
       for (const pessoa of pessoas) {
         const imgUrl = await buscarImagemPessoa(pessoa.nome);
         
-        // Verifica se o ator participou de filmes e exibe a relação
-        const filmesParticipados = pessoa.filmes?.map((f) => 
-          `${f.titulo} (${f.Atuacao.is_principal ? "Protagonista" : "Coadjuvante"})`
-        ).join(", ") || "Nenhum filme registrado";
-
         const card = document.createElement("div");
         card.classList.add("card");
+
+        // Construir lista de filmes
+        const filmesList = pessoa.filmes?.map(f => 
+          `<li>${f.titulo} (${f.Atuacao?.is_principal ? 'Protagonista' : 'Coadjuvante'})</li>`
+        ).join("") || "<li>Nenhum filme registrado</li>";
 
         card.innerHTML = `
           <h2>${pessoa.nome}</h2>
           <div class="person-photo">
-            <img class="popup-trigger" data-nome="${pessoa.nome}" src="${imgUrl}" alt="Foto de ${pessoa.nome}">
+            <img src="${imgUrl}" alt="Foto de ${pessoa.nome}">
           </div>
           <p><strong>Data Nasc.:</strong> ${formatarData(pessoa.data_nascimento)}</p>
           <p><strong>Sexo:</strong> ${pessoa.sexo || "N/A"}</p>
           <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "N/A"}</p>
-          <p><strong>Filmes:</strong> ${filmesParticipados}</p>
+          <details>
+            <summary>Filmes Participados (${pessoa.filmes?.length || 0})</summary>
+            <ul>${filmesList}</ul>
+          </details>
           <div class="actions">
             <a href="/pessoas/editar/${pessoa.id}">Editar</a>
             <form action="/pessoas/deletar/${pessoa.id}" method="POST" class="delete-form">
@@ -212,37 +219,12 @@ async function carregarPessoasDoBanco() {
   }
 }
 
-
-
-
-document.addEventListener("DOMContentLoaded", async () => {
-  document.querySelectorAll("[data-pessoas]").forEach(async (container) => {
-    const tipo = container.getAttribute("data-tipo"); // Obtém o tipo (atores, diretores, produtores)
-    const pessoas = JSON.parse(container.getAttribute("data-pessoas") || "[]");
-
-    // Buscar imagens para todas as pessoas de forma assíncrona
-    for (let pessoa of pessoas) {
-      pessoa.imagem = await buscarImagemPessoa(pessoa.nome);
-    }
-
-    // Atualizar o HTML com as imagens já carregadas
-    container.innerHTML = pessoas
-      .map(
-        (pessoa) => `
-        <div class="card">
-          <h2>${pessoa.nome}</h2>
-          <div class="person-photo">
-            <img src="${pessoa.imagem}" alt="Foto de ${pessoa.nome}">
-          </div>
-          <p><strong>Data de Nascimento:</strong> ${pessoa.data_nascimento || "Não disponível"}</p>
-          <p><strong>Sexo:</strong> ${pessoa.sexo || "Não informado"}</p>
-          <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "Não disponível"}</p>
-        </div>
-      `
-      )
-      .join("");
-  });
+// Atualizar o DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+  carregarFilmesDoBanco();
+  carregarPessoasDoBanco();
 });
+
 
 
 
