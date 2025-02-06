@@ -33,20 +33,15 @@
       <% }) %>
     </select><br><br>
 
-   <form action="/filmes/novo" method="POST">
-  <!-- Outros campos do filme -->
-  
-  <div class="form-group">
-    <label>Produtores:</label>
-    <select name="produtores" multiple class="form-control">
-      <% produtores.forEach(produtor => { %>
-        <option value="<%= produtor.id %>"><%= produtor.nome %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <button type="submit">Cadastrar Filme</button>
-</form>
+    <label for="produtores">Produtores:</label>
+<select id="produtores" name="produtores" multiple>
+  <% produtores.forEach(produtor => { %>
+    <option value="<%= produtor.id %>"
+      <%= filme && filme.produtores && filme.produtores.some(p => p.id === produtor.id) ? 'selected' : '' %> >
+      <%= produtor.nome %>
+    </option>
+  <% }) %>
+</select>
 <br><br>
 
     <button type="submit">Salvar</button>
