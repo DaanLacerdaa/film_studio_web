@@ -3,7 +3,6 @@ const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 
-const cors = require('cors');
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -36,7 +35,7 @@ app.use((req, res) => {
   res.status(404).render("erro", { mensagem: "Página não encontrada" });
 });
 
-app.use(cors());  // Habilita CORS para todas as origens
+
 
 
 // Habilite CORS para imagens do TMDB
