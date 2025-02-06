@@ -50,18 +50,8 @@ Filme.init(
 );
 
 // Definição das associações
-Filme.associate = (models) => {
-  Filme.belongsTo(models.Pessoa, {
-    foreignKey: "diretor_id",
-    as: "diretor",
-  });
 
-  Filme.belongsToMany(models.Pessoa, {
-    through: models.Producao, // Usa o model de Producao como intermediário
-    as: "produtores",
-    foreignKey: "filme_id",
-    otherKey: "pessoa_id",
-  });
-};
+
+
 
 module.exports = Filme;

@@ -53,6 +53,7 @@ Filme.belongsToMany(sequelize.models.Pessoa, {
   as: "produtores",
 });
 
+
 sequelize.models.Pessoa.belongsToMany(Filme, {
   through: Producao,
   foreignKey: "pessoa_id",
