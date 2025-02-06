@@ -3,7 +3,6 @@ const router = express.Router();
 const Filme = require("../models/filme");
 const Pessoa = require("../models/pessoa");
 const Atuacao = require("../models/atuacao");
-const Producao = require("../models/producao");
 
 // Listar todos os filmes
 router.get("/", async (req, res) => {
@@ -48,9 +47,7 @@ router.get("/novo", async (req, res) => {
     res.status(500).send("Erro ao carregar o formulário de novo filme");
   }
 });
-
-// Criar um novo filme
-router.post("/novo", async (req, res) => {
+router.post('/novo', async (req, res) => {
   try {
     const { titulo, ano, genero, duracao, idioma, diretor_id, produtores } = req.body;
 
@@ -73,6 +70,24 @@ router.post("/novo", async (req, res) => {
   } catch (error) {
     console.error('Erro ao criar filme:', error);
     res.status(500).send('Erro interno do servidor');
+  }
+});
+
+// Criar um novo filme
+router.post("/", async (req, res) => {
+  const { titulo, ano_lancamento, genero, duracao, idioma, diretor_id, produtores } = req.body;
+  try {
+    const filme = await Filme.create({ titulo, ano_lancamento, genero, duracao, idioma, diretor_id });
+
+    // Adicionar produtores ao filme
+    if (produtores && Array.isArray(produtores) && produtores.length > 0) {
+      await filme.setProdutores(produtores);
+    }
+
+    res.redirect("/filmes");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao criar o filme");
   }
 });
 
@@ -131,7 +146,6 @@ router.get("/editar/:id", async (req, res) => {
     res.status(500).send("Erro ao carregar o filme para edição");
   }
 });
-
 // Atualizar um filme
 router.post("/editar/:id", async (req, res) => {
   const { titulo, duracao, idioma, diretor_id, ano_lancamento, genero, produtores } = req.body;
@@ -165,6 +179,7 @@ router.post("/editar/:id", async (req, res) => {
     res.status(500).send("Erro ao atualizar o filme");
   }
 });
+
 
 // Deletar um filme
 router.post("/deletar/:id", async (req, res) => {

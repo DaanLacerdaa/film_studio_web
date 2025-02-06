@@ -22,7 +22,8 @@ app.use(bodyParser.urlencoded({ extended: false })); // Permite receber formulá
 app.use(express.static(path.join(__dirname, "public")));
 
 // Definição das rotas
-app.use("/filmes", filmesRoutes);
+// Usar as rotas de filmes
+app.use('/filmes', filmesRoutes);
 app.use("/pessoas", pessoasRoutes);
 
 // Rota principal
