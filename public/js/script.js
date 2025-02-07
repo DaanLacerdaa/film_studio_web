@@ -56,7 +56,9 @@ async function carregarFilmesDoBanco() {
         <p><strong>Rotten Tomatoes:</strong> ${
           filmeDadosExternos?.rottenTomatoes || "N/A"
         }</p>
-        <p><strong>Sinopse:</strong> ${filmeDadosExternos?.sinopse || "Não disponível"}</p>
+        <p><strong>Sinopse:</strong> ${
+          filmeDadosExternos?.sinopse || "Não disponível"
+        }</p>
 
         <div class="movie-cover">
           <img src="${
@@ -81,7 +83,6 @@ async function carregarFilmesDoBanco() {
     console.error("Erro ao carregar filmes:", error);
   }
 }
-
 
 // ========== 🌐 FUNÇÕES DE API ==========
 async function buscarFilme(titulo) {
@@ -116,10 +117,11 @@ async function buscarFilme(titulo) {
         ? `https://image.tmdb.org/t/p/w500${filmeTMDB.poster_path}`
         : dataOMDB.Poster || "/images/default-movie.jpg",
       imdbRating: dataOMDB.imdbRating || "N/A",
-      rottenTomatoes: dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value || "N/A",
-      sinopse: filmeTMDB.overview || dataOMDB.Plot || "Sinopse não disponível."
+      rottenTomatoes:
+        dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value ||
+        "N/A",
+      sinopse: filmeTMDB.overview || dataOMDB.Plot || "Sinopse não disponível.",
     };
-    
   } catch (error) {
     console.error("Erro na busca de filme:", error);
     return null;
@@ -127,21 +129,30 @@ async function buscarFilme(titulo) {
 }
 // ========== 🌐 FUNÇÕES DE API ==========
 
-
 async function carregarPessoasDoBanco() {
   const categorias = ["atores", "diretores", "produtores"];
-  
-  for (const categoria of categorias) {
-      const container = document.getElementById(`${categoria}-container`);
-      const pessoasData = container.dataset[categoria];
-      if (!pessoasData) continue;
 
-      const pessoas = JSON.parse(pessoasData);
-      for (const pessoa of pessoas) {
-          const imagemPessoa = await buscarImagemPessoa(pessoa.nome);
-          const card = criarCardPessoa(pessoa, imagemPessoa);
-          container.appendChild(card);
+  for (const categoria of categorias) {
+    const container = document.getElementById(`${categoria}-container`);
+    const pessoasData = container.dataset[categoria];
+    if (!pessoasData) continue;
+
+    const pessoas = JSON.parse(pessoasData);
+    for (const pessoa of pessoas) {
+      const card = criarCardPessoa(pessoa, "images/default-person.jpg"); // Imagem padrão inicial
+      container.appendChild(card);
+
+      try {
+        const imagemPessoa = await buscarImagemPessoa(pessoa.nome);
+        const imgElement = card.querySelector("img"); // Seleciona a imagem dentro do card
+        if (imgElement) {
+          imgElement.src = imagemPessoa; // Atualiza o src da imagem
+        }
+      } catch (error) {
+        console.error("Erro ao buscar ou atualizar imagem:", error);
+        // Você pode manter a imagem padrão ou definir uma imagem de erro aqui.
       }
+    }
   }
 }
 
@@ -149,15 +160,32 @@ async function buscarImagemPessoa(nome) {
   const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
 
   try {
-      const response = await fetch(`https://api.themoviedb.org/3/searchperson?api_key=${apiKeyTMDB}&query=${encodeURIComponent(nome)}`);
-      const data = await response.json();
-      return data.results.length ? `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}` :"images/default-person.jpg";
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/person?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
+        nome
+      )}`
+    );
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`Erro na API TMDB: ${response.status}`); // Lança um erro se a resposta não for ok
+    }
+
+    if (
+      data.results &&
+      data.results.length > 0 &&
+      data.results[0].profile_path
+    ) {
+      return `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`;
+    } else {
+      console.warn(`Nenhuma imagem encontrada para ${nome}.`);
+      return "images/default-person.jpg"; // Retorna a imagem padrão se não encontrar
+    }
   } catch (error) {
-      console.error("Erro ao buscar imagem da pessoa:", error);
-      return "images/default-person.jpg";
+    console.error("Erro ao buscar imagem da pessoa:", error);
+    return "images/default-person.jpg";
   }
 }
-
 function criarCardFilme(filme, imagem) {
   const card = document.createElement("div");
   card.className = "card-filme";
@@ -175,30 +203,33 @@ function criarCardPessoa(pessoa, imagem) {
   card.innerHTML = `
       <img src="${imagem}" alt="${pessoa.nome}">
       <h3>${pessoa.nome}</h3>
-      <p>Data de Nascimento: ${pessoa.data_nascimento || 'Desconhecido'}</p>
-      <p>Sexo: ${pessoa.sexo || 'Desconhecido'}</p> 
-      <p>Nacionalidade: ${pessoa.nacionalidade || 'Desconhecida'}</p>
-      <p>Participações: ${filmes.filmesList || 'Desconhecido'}</p>
+      <p>Data de Nascimento: ${pessoa.data_nascimento || "Desconhecido"}</p>
+      <p>Sexo: ${pessoa.sexo || "Desconhecido"}</p> 
+      <p>Nacionalidade: ${pessoa.nacionalidade || "Desconhecida"}</p>
+      <p>Participações: ${filmes.filmesList || "Desconhecido"}</p>
 
   `;
   return card;
 }
 
-
 // Funções auxiliares
 function formatarData(data) {
-  return data ? new Date(data).toLocaleDateString('pt-BR') : 'N/A';
+  return data ? new Date(data).toLocaleDateString("pt-BR") : "N/A";
 }
 
 function gerarDetalhesFilmes(pessoa) {
-  if (!pessoa.filmes?.length) return '';
-  
-  const filmesList = pessoa.filmes.map(f => `
+  if (!pessoa.filmes?.length) return "";
+
+  const filmesList = pessoa.filmes
+    .map(
+      (f) => `
     <li>
       ${f.titulo} 
-      <em>(${f.Atuacao?.is_principal ? 'Protagonista' : 'Coadjuvante'})</em>
+      <em>(${f.Atuacao?.is_principal ? "Protagonista" : "Coadjuvante"})</em>
     </li>
-  `).join('');
+  `
+    )
+    .join("");
 
   return `
     <details>
@@ -214,27 +245,23 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarPessoasDoBanco();
 });
 
-
-
-
-
 // ========== 🖼️ FUNÇÕES DE POPUP ==========
 function configurarPopups() {
   let popupAtivo = null;
 
-document.addEventListener("mouseover", async (e) => {
-  if (e.target.classList.contains("popup-trigger") && !popupAtivo) {
-    popupAtivo = criarPopup(e.target);
-    document.body.appendChild(popupAtivo);
-  }
-});
+  document.addEventListener("mouseover", async (e) => {
+    if (e.target.classList.contains("popup-trigger") && !popupAtivo) {
+      popupAtivo = criarPopup(e.target);
+      document.body.appendChild(popupAtivo);
+    }
+  });
 
-document.addEventListener("mouseout", (e) => {
-  if (popupAtivo) {
-    popupAtivo.remove();
-    popupAtivo = null;
-  }
-});
+  document.addEventListener("mouseout", (e) => {
+    if (popupAtivo) {
+      popupAtivo.remove();
+      popupAtivo = null;
+    }
+  });
 }
 
 function criarPopup(imgElement) {
@@ -288,7 +315,7 @@ function configurarToggleTema() {
       localStorage.setItem("tema", novoTema);
 
       // Forçar re-render dos elementos
-      document.querySelectorAll('.card').forEach(card => {
+      document.querySelectorAll(".card").forEach((card) => {
         card.style.display = "none";
         card.offsetHeight; // Força reflow
         card.style.display = "block";
@@ -299,10 +326,9 @@ function configurarToggleTema() {
 
 // Inicializar ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
-  aplicarTema();  // Aplica o tema armazenado
-  configurarToggleTema();  // Configura o botão de alternância
+  aplicarTema(); // Aplica o tema armazenado
+  configurarToggleTema(); // Configura o botão de alternância
 });
-
 
 function configurarMenuDropdown() {
   document.querySelectorAll(".dropdown").forEach((dropdown) => {
@@ -329,15 +355,13 @@ function configurarConfirmacaoExclusao() {
   });
 }
 
-
-
 async function filtrarPessoas(tipo) {
   try {
     const response = await fetch(`/pessoas?tipo=${tipo}`);
     if (!response.ok) throw new Error("Erro ao buscar dados");
 
     const data = await response.json();
-    
+
     // Atualiza a interface (exemplo: lista de pessoas)
     const listaPessoas = document.getElementById("lista-pessoas");
     if (!listaPessoas) return;
@@ -355,14 +379,14 @@ async function filtrarPessoas(tipo) {
 
 // Adiciona eventos aos botões de filtro (se existirem)
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".botao-filtro").forEach(botao => {
+  document.querySelectorAll(".botao-filtro").forEach((botao) => {
     botao.addEventListener("click", () => {
       const tipo = botao.getAttribute("data-tipo");
-      document.querySelectorAll(".card-grid").forEach(grid => {
+      document.querySelectorAll(".card-grid").forEach((grid) => {
         grid.style.display = grid.id.includes(tipo) ? "grid" : "none";
       });
     });
-  }); 
+  });
 });
 function configurarFiltroTabela() {
   const filtroInput = document.getElementById("filtro-tabela");
