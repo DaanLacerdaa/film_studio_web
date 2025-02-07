@@ -11,7 +11,7 @@
   <%- include('partials/header') %>
   <main class="container">
   <h1><%= pessoa ? 'Editar Pessoa' : 'Adicionar Pessoa' %></h1>
-  <form action="<%= pessoa ? '/atores/editar/' + pessoa.id : '/atores' %>" method="POST">
+  <form action="<%= pessoa ? '/pessoas/editar/' + pessoa.id : '/pessoas' %>" method="POST">
     <label for="nome">Nome:</label>
     <input type="text" id="nome" name="nome" value="<%= pessoa ? pessoa.nome : '' %>" required>
     <br>
@@ -22,9 +22,9 @@
 
     <label for="sexo">Sexo:</label>
     <select id="sexo" name="sexo" required>
-      <option value="Masculino" <%= pessoa && pessoa.sexo === 'Masculino' ? 'selected' : '' %>>Masculino</option>
-      <option value="Feminino" <%= pessoa && pessoa.sexo === 'Feminino' ? 'selected' : '' %>>Feminino</option>
-      <option value="Outro" <%= pessoa && pessoa.sexo === 'Outro' ? 'selected' : '' %>>Outro</option>
+        <option value="Masculino" <%= pessoa && pessoa.sexo === 'Masculino' ? 'selected' : '' %>>Masculino</option>
+        <option value="Feminino" <%= pessoa && pessoa.sexo === 'Feminino' ? 'selected' : '' %>>Feminino</option>
+        <option value="Outro" <%= pessoa && pessoa.sexo === 'Outro' ? 'selected' : '' %>>Outro</option>
     </select>
     <br>
 
@@ -32,17 +32,16 @@
     <input type="text" id="nacionalidade" name="nacionalidade" value="<%= pessoa ? pessoa.nacionalidade : '' %>" required>
     <br>
 
-    <!-- Campo para selecionar o tipo de pessoa -->
+    <label for="tipo">Tipo:</label>
     <select id="tipo" name="tipo" required>
-      <option value="Ator" <%= pessoa && pessoa.tipo === 'Ator' ? 'selected' : '' %>>Ator</option>
-      <option value="Diretor" <%= pessoa && pessoa.tipo === 'Diretor' ? 'selected' : '' %>>Diretor</option>
-      <option value="Produtor" <%= pessoa && pessoa.tipo === 'Produtor' ? 'selected' : '' %>>Produtor</option>
+        <option value="Ator" <%= pessoa && pessoa.tipo === 'Ator' ? 'selected' : '' %>>Ator</option>
+        <option value="Diretor" <%= pessoa && pessoa.tipo === 'Diretor' ? 'selected' : '' %>>Diretor</option>
+        <option value="Produtor" <%= pessoa && pessoa.tipo === 'Produtor' ? 'selected' : '' %>>Produtor</option>
     </select>
-    
-    
+    <br>
 
     <button type="submit">Salvar</button>
-  </form>
+</form>
 </main>
   <%- include('partials/toggle') %>
 

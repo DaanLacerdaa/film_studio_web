@@ -12,7 +12,8 @@
   <main class="container">
       
     <h1><%= ator ? 'Editar Pessoa' : 'Adicionar Pessoa' %></h1>
-    <form action="<%= ator ? '/pessoas/editar/' + ator.id : '/pessoas' %>" method="POST">
+    <form action="<%= ator ? '/pessoas/editar/' + ator.id : '/pessoas/atores' %>" method="POST">
+    </form>
       <label for="nome">Nome:</label>
       <input type="text" id="nome" name="nome" value="<%= ator ? ator.nome : '' %>" required>
       <br>

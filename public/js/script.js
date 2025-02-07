@@ -135,22 +135,41 @@ async function carregarPessoasDoBanco() {
   for (const categoria of categorias) {
     const container = document.getElementById(`${categoria}-container`);
     const pessoasData = container.dataset[categoria];
-    if (!pessoasData) continue;
+    if (!pessoasData) {
+      console.warn(`Dados de ${categoria} não encontrados.`);
+      continue; // Pula para a próxima categoria
+    }
 
     const pessoas = JSON.parse(pessoasData);
     for (const pessoa of pessoas) {
-      const card = criarCardPessoa(pessoa, "images/default-person.jpg"); // Imagem padrão inicial
+      const card = criarCardPessoa(
+        pessoa,
+        "/images/default-person.jpg",
+        pessoa.filmes
+      ); // Imagem padrão inicial
       container.appendChild(card);
 
       try {
         const imagemPessoa = await buscarImagemPessoa(pessoa.nome);
-        const imgElement = card.querySelector("img"); // Seleciona a imagem dentro do card
+        const imgElement = card.querySelector("img");
+
         if (imgElement) {
-          imgElement.src = imagemPessoa; // Atualiza o src da imagem
+          imgElement.onload = () => {
+            imgElement.src = imagemPessoa;
+          };
+          imgElement.onerror = () => {
+            console.error(`Erro ao carregar imagem para ${pessoa.nome}.`);
+            imgElement.src = "images/default-person.jpg";
+          };
+          imgElement.src = "images/default-person.jpg"; // Define o src *antes* do onload
         }
       } catch (error) {
-        console.error("Erro ao buscar ou atualizar imagem:", error);
-        // Você pode manter a imagem padrão ou definir uma imagem de erro aqui.
+        console.error(
+          `Erro ao parsear dados de ${categoria}:`,
+          error,
+          pessoasData
+        ); // Mostra os dados que causaram o erro
+        //
       }
     }
   }
@@ -197,7 +216,7 @@ function criarCardFilme(filme, imagem) {
   return card;
 }
 
-function criarCardPessoa(pessoa, imagem) {
+function criarCardPessoa(pessoa, imagem, filmes) {
   const card = document.createElement("div");
   card.className = "card-pessoa";
   card.innerHTML = `
