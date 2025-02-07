@@ -26,7 +26,16 @@ router.get("/", async (req, res) => {
       return acc;
     }, {});
 
-    res.render("pessoas", { pessoasAgrupadas: agrupado });
+    const atores = agrupado.Ator || []; // Obtém os atores do objeto agrupado ou um array vazio
+    const diretores = agrupado.Diretor || []; // Obtém os diretores ou um array vazio
+    const produtores = agrupado.Produtor || []; // Obtém os produtores ou um array vazio
+
+    res.render("pessoas", {
+      pessoasAgrupadas: agrupado,
+      atores: atores, // Passa os atores para a view
+      diretores: diretores, // Passa os diretores para a view
+      produtores: produtores, // Passa os produtores para a view
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar pessoas");
