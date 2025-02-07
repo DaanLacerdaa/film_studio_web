@@ -3,7 +3,6 @@ const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
 
-
 app.use(express.urlencoded({ extended: true }));
 
 // Importando as rotas unificadas de filmes e pessoas
@@ -23,7 +22,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Definição das rotas
 // Usar as rotas de filmes
-app.use('/filmes', filmesRoutes);
+app.use("/filmes", filmesRoutes);
 app.use("/pessoas", pessoasRoutes);
 
 // Rota principal
@@ -36,17 +35,17 @@ app.use((req, res) => {
   res.status(404).render("erro", { mensagem: "Página não encontrada" });
 });
 
-
-
-
 // Habilite CORS para imagens do TMDB
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://image.tmdb.org');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header("Access-Control-Allow-Origin", "https://image.tmdb.org");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
 // Inicialização do servidor
-const PORT = 3000;
+const PORT = 3002;
 app.listen(PORT, () => {
   console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
 });
