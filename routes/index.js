@@ -20,16 +20,24 @@ router.get("/pessoas", async (req, res) => {
     const groupedPeople = pessoas.reduce((acc, pessoa) => {
       const tipo = pessoa.tipo?.toLowerCase() || "outros";
       if (!acc[tipo]) acc[tipo] = [];
-      acc[tipo].push(pessoa);
+      acc[tipo].push({
+        ...pessoa.toJSON(),
+        data_nascimento: formatarData(pessoa.data_nascimento),
+      });
       return acc;
     }, {});
 
-    res.render("pessoas", { pessoas: groupedPeople });
+    console.log("Enviando para a view:", JSON.stringify(groupedPeople, null, 2));
+
+    res.render("pessoas", { pessoas: groupedPeople }); // <-- AQUI, nome correto!
   } catch (err) {
     console.error("Erro ao buscar pessoas:", err);
-    res.status(500).render("erro", { mensagem: "Erro ao carregar lista de pessoas" });
+    res
+      .status(500)
+      .render("erro", { mensagem: "Erro ao carregar lista de pessoas" });
   }
 });
+
 
 // Listar filmes
 router.get("/filmes", async (req, res) => {
