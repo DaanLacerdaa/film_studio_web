@@ -26,6 +26,7 @@ router.get("/", async (req, res) => {
       return acc;
     }, {});
 
+    // *** AQUI ESTÁ A CORREÇÃO ***
     const atores = agrupado.Ator || []; // Obtém os atores do objeto agrupado ou um array vazio
     const diretores = agrupado.Diretor || []; // Obtém os diretores ou um array vazio
     const produtores = agrupado.Produtor || []; // Obtém os produtores ou um array vazio
