@@ -26,4 +26,4 @@ Pessoa.init(
   }
 );
 
-module.exports = { Pessoa };
+module.exports = Pessoa;

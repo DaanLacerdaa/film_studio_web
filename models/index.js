@@ -1,8 +1,8 @@
 const sequelize = require("../database/database"); // IMPORTA PRIMEIRO O SEQUELIZE
-const { Pessoa } = require("./pessoa"); // Certifique-se de que pessoa.js está correto
-const { Filme } = require("./Filme");
-const { Atuacao } = require("./atuacao");
-const { Producao } = require("./producao");
+const Pessoa = require("./pessoa");
+const Filme = require("./Filme");
+const Atuacao = require("./atuacao");
+const Producao = require("./producao");
 
 // Definição de Associações
 Pessoa.hasMany(Filme, { foreignKey: "diretor_id", as: "filmes_dirigidos" });
