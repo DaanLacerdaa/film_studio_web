@@ -24,6 +24,18 @@
     <label for="idioma">Idioma:</label>
     <input type="text" id="idioma" name="idioma" value="<%= filme ? filme.idioma : '' %>" required><br><br>
 
+    <label for="atores">Elenco:</label>
+    <select id="atores" name="atores" multiple required>
+      <% atores.forEach(ator => { %>
+        <option value="<%= ator.id %>"
+          <%= filme && filme.atores && filme.atores.some(a => a.id === ator.id) ? 'selected' : '' %> >
+          <%= ator.nome %>
+        </option>
+      <% }) %>
+    </select>
+    <br><br>
+
+
     <label for="diretor_id">Diretor:</label>
     <select id="diretor_id" name="diretor_id" required>
       <% diretores.forEach(diretor => { %>

@@ -129,6 +129,27 @@ async function buscarFilme(titulo) {
 }
 // ========== 🌐 FUNÇÕES DE API ==========
 
+async function buscarImagensPessoas(nomes) {
+  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
+  const promessas = nomes.map((nome) =>
+    fetch(
+      `https://api.themoviedb.org/3/search/person?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
+        nome
+      )}`
+    )
+      .then((res) => res.json())
+      .then((data) => ({
+        nome,
+        imagem: data.results?.[0]?.profile_path
+          ? `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`
+          : "/images/default-person.jpg",
+      }))
+      .catch(() => ({ nome, imagem: "/images/default-person.jpg" }))
+  );
+
+  return Promise.all(promessas);
+}
+
 async function carregarPessoasDoBanco() {
   const categorias = ["atores", "diretores", "produtores"];
 
@@ -139,7 +160,7 @@ async function carregarPessoasDoBanco() {
     const pessoasData = container.dataset[categoria];
     if (!pessoasData) {
       console.warn(`Dados de ${categoria} não encontrados.`);
-      continue; // Pula para a próxima categoria
+      continue;
     }
 
     let pessoas;
@@ -150,12 +171,11 @@ async function carregarPessoasDoBanco() {
       continue;
     }
 
+    container.innerHTML = ""; // Limpa o container antes de adicionar novos cards
+
     for (const pessoa of pessoas) {
-      const card = criarCardPessoa(
-        pessoa,
-        "/images/default-person.jpg",
-        pessoa.filmes
-      );
+      const imagemPadrao = "/images/default-person.jpg";
+      const card = criarCardPessoa(pessoa, imagemPadrao, pessoa.filmes);
       container.appendChild(card);
 
       try {
@@ -163,44 +183,12 @@ async function carregarPessoasDoBanco() {
         const imgElement = card.querySelector("img");
 
         if (imgElement) {
-          imgElement.onload = () => {
-            console.log(`Imagem carregada com sucesso para ${pessoa.nome}`);
-          };
-          imgElement.onerror = () => {
-            console.error(`Erro ao carregar imagem para ${pessoa.nome}.`);
-            imgElement.src = "/images/default-person.jpg";
-          };
-
-          // Definir a imagem depois dos eventos de onload/onerror estarem definidos
           imgElement.src = imagemPessoa;
         }
       } catch (error) {
         console.error(`Erro ao buscar imagem para ${pessoa.nome}:`, error);
       }
     }
-  }
-}
-
-async function buscarImagemPessoa(nome) {
-  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
-
-  try {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/person?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
-        nome
-      )}`
-    );
-    const data = await response.json();
-
-    if (!response.ok || !data.results || data.results.length === 0) {
-      console.warn(`Nenhuma imagem encontrada para ${nome}.`);
-      return "/images/default-person.jpg"; // Retorna a imagem padrão
-    }
-
-    return `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`;
-  } catch (error) {
-    console.error(`Erro ao buscar imagem da API TMDB para ${nome}:`, error);
-    return "/images/default-person.jpg";
   }
 }
 function criarCardFilme(filme, imagem) {
