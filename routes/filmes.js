@@ -1,14 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const Filme = require("../models/filme");
+const Filme = require("../models/Filme");
 const Pessoa = require("../models/pessoa");
 const Atuacao = require("../models/atuacao");
+const Producao = require("../models/producao");
 
 // Listar todos os filmes
 router.get("/", async (req, res) => {
   try {
     const filmes = await Filme.findAll({
-      attributes: ["id", "titulo", "ano_lancamento", "genero", "duracao", "idioma"],
+      attributes: [
+        "id",
+        "titulo",
+        "ano_lancamento",
+        "genero",
+        "duracao",
+        "idioma",
+      ],
       include: [
         {
           model: Pessoa,
@@ -25,6 +33,7 @@ router.get("/", async (req, res) => {
           model: Pessoa,
           as: "produtores",
           attributes: ["nome"],
+          through: { model: Producao, attributes: [] }, // Certifica que a relação Many-to-Many é reconhecida
         },
       ],
     });
@@ -39,17 +48,18 @@ router.get("/", async (req, res) => {
 // Formulário para criar um novo filme
 router.get("/novo", async (req, res) => {
   try {
-    const diretores = await Pessoa.findAll({ where: { tipo: "diretor" } });
-    const produtores = await Pessoa.findAll({ where: { tipo: "produtor" } });
+    const diretores = await Pessoa.findAll({ where: { tipo: "DIRETOR" } });
+    const produtores = await Pessoa.findAll({ where: { tipo: "PRODUTOR" } });
     res.render("filme_form", { filme: null, diretores, produtores });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar o formulário de novo filme");
   }
 });
-router.post('/novo', async (req, res) => {
+router.post("/novo", async (req, res) => {
   try {
-    const { titulo, ano, genero, duracao, idioma, diretor_id, produtores } = req.body;
+    const { titulo, ano, genero, duracao, idioma, diretor_id, produtores } =
+      req.body;
 
     // Cria o filme base
     const filme = await Filme.create({
@@ -58,38 +68,22 @@ router.post('/novo', async (req, res) => {
       genero,
       duracao: parseInt(duracao),
       idioma,
-      diretor_id: diretor_id || null
+      diretor_id: diretor_id || null,
     });
 
     // Associa os produtores via tabela de junção
-    if (produtores && produtores.length > 0) {
-      await filme.addProdutores(produtores);
+    if (produtores && Array.isArray(produtores)) {
+      await filme.setProdutores(produtores.map((id) => parseInt(id)));
     }
 
-    res.redirect('/filmes');
+    res.redirect("/filmes");
   } catch (error) {
-    console.error('Erro ao criar filme:', error);
-    res.status(500).send('Erro interno do servidor');
+    console.error("Erro ao criar filme:", error);
+    res.status(500).send("Erro interno do servidor");
   }
 });
 
 // Criar um novo filme
-router.post("/", async (req, res) => {
-  const { titulo, ano_lancamento, genero, duracao, idioma, diretor_id, produtores } = req.body;
-  try {
-    const filme = await Filme.create({ titulo, ano_lancamento, genero, duracao, idioma, diretor_id });
-
-    // Adicionar produtores ao filme
-    if (produtores && Array.isArray(produtores) && produtores.length > 0) {
-      await filme.setProdutores(produtores);
-    }
-
-    res.redirect("/filmes");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao criar o filme");
-  }
-});
 
 // Formulário para editar um filme
 router.get("/editar/:id", async (req, res) => {
@@ -106,7 +100,7 @@ router.get("/editar/:id", async (req, res) => {
           model: Pessoa,
           as: "produtores",
           attributes: ["id", "nome"],
-          through: { model: Producao, attributes: [] }, // Ajustado para pegar os produtores corretamente
+          through: { model: Producao, attributes: [] },
         },
         {
           model: Pessoa,
@@ -121,14 +115,7 @@ router.get("/editar/:id", async (req, res) => {
     }
 
     // Buscar diretores: Pessoas que já estão vinculadas como diretores
-    const diretores = await Pessoa.findAll({
-      where: {
-        id: await Filme.findAll({
-          attributes: ["diretor_id"],
-          raw: true,
-        }).then((res) => res.map((f) => f.diretor_id)),
-      },
-    });
+    const diretores = await Pessoa.findAll({ where: { tipo: "DIRETOR" } });
 
     // Buscar produtores: Pessoas que já estão na tabela producao
     const produtores = await Pessoa.findAll({
@@ -148,7 +135,15 @@ router.get("/editar/:id", async (req, res) => {
 });
 // Atualizar um filme
 router.post("/editar/:id", async (req, res) => {
-  const { titulo, duracao, idioma, diretor_id, ano_lancamento, genero, produtores } = req.body;
+  const {
+    titulo,
+    duracao,
+    idioma,
+    diretor_id,
+    ano_lancamento,
+    genero,
+    produtores,
+  } = req.body;
 
   try {
     const filme = await Filme.findByPk(req.params.id);
@@ -158,7 +153,14 @@ router.post("/editar/:id", async (req, res) => {
     }
 
     // Atualiza os dados principais do filme
-    await filme.update({ titulo, duracao, idioma, diretor_id, ano_lancamento, genero });
+    await filme.update({
+      titulo,
+      duracao,
+      idioma,
+      diretor_id,
+      ano_lancamento,
+      genero,
+    });
 
     // Tratamento para produtores: transforma string única em array
     let produtoresArray = [];
@@ -180,7 +182,6 @@ router.post("/editar/:id", async (req, res) => {
   }
 });
 
-
 // Deletar um filme
 router.post("/deletar/:id", async (req, res) => {
   try {
@@ -192,7 +193,9 @@ router.post("/deletar/:id", async (req, res) => {
 
     // Removendo as associações antes de deletar
     await filme.setProdutores([]);
-    await filme.setElenco([]);
+    if (filme.setElenco) {
+      await filme.setElenco([]);
+    }
 
     await filme.destroy();
     res.redirect("/filmes");
