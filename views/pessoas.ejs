@@ -43,26 +43,33 @@
     </style>
   </head>
   <body>
-  <%- include('partials/header') %>
-  <main class="container">
-    <h1>Lista de Pessoas</h1>
-    <a href="/pessoas/novo" class="btn">Adicionar Nova Pessoa</a>
+    <%- include('partials/header') %>
+    <main class="container">
+      <h1>Lista de Pessoas</h1>
+      <a href="/pessoas/novo" class="btn">Adicionar Nova Pessoa</a>
 
-    <h2>Atores</h2>
-    <div id="atores-container" class="card-grid"
-      data-atores="<%= JSON.stringify(atores).replace(/"/g, '&quot;') %>">
-    </div>
-
-    <h2>Diretores</h2>
-    <div id="diretores-container" class="card-grid"
-      data-diretores="<%= JSON.stringify(diretores).replace(/"/g, '&quot;') %>">
-    </div>
-
-    <h2>Produtores</h2>
-    <div id="produtores-container" class="card-grid"
-      data-produtores="<%= JSON.stringify(produtores).replace(/"/g, '&quot;') %>">
-    </div>
-  </main>
-  <%- include('partials/toggle') %>
-</body>
+      <% if (typeof pessoas !== "undefined" && pessoas) { %> <% ["ator",
+      "diretor", "produtor"].forEach(tipo => { %> <% if (pessoas[tipo] &&
+      pessoas[tipo].length > 0) { %>
+      <h2><%= tipo.charAt(0).toUpperCase() + tipo.slice(1) + "es" %></h2>
+      <div class="card-grid">
+        <% pessoas[tipo].forEach(pessoa => { %>
+        <div class="card">
+          <h2><%= pessoa.nome %></h2>
+          <p>Nascimento: <%= pessoa.data_nascimento %></p>
+          <p>Nacionalidade: <%= pessoa.nacionalidade %></p>
+          <p>Sexo: <%= pessoa.sexo %></p>
+          <div class="actions">
+            <a href="/pessoas/<%= pessoa.id %>/editar" class="btn">Editar</a>
+            <a href="/pessoas/<%= pessoa.id %>/deletar" class="btn">Deletar</a>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } %> <% }) %> <% } else { %>
+      <p>Nenhuma pessoa encontrada.</p>
+      <% } %>
+    </main>
+    <%- include('partials/toggle') %>
+  </body>
 </html>

@@ -2,6 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { Pessoa, Filme } = require("../models");
 
+// Função para formatar a data de nascimento
+function formatarData(data) {
+  return data ? new Date(data).toLocaleDateString("pt-BR") : "N/A";
+}
+
 // Rota unificada para listar pessoas
 router.get("/pessoas", async (req, res) => {
   try {
@@ -24,10 +29,23 @@ router.get("/pessoas", async (req, res) => {
         ...pessoa.toJSON(),
         data_nascimento: formatarData(pessoa.data_nascimento),
       });
+      acc[tipo].push({
+        ...pessoa.toJSON(),
+        data_nascimento: formatarData(pessoa.data_nascimento),
+      });
       return acc;
     }, {});
 
-    console.log("Enviando para a view:", JSON.stringify(groupedPeople, null, 2));
+    console.log(
+      "Enviando para a view:",
+      JSON.stringify(groupedPeople, null, 2)
+    );
+
+    res.render("pessoas", { pessoas: groupedPeople }); // <-- AQUI, nome correto!
+    console.log(
+      "Enviando para a view:",
+      JSON.stringify(groupedPeople, null, 2)
+    );
 
     res.render("pessoas", { pessoas: groupedPeople }); // <-- AQUI, nome correto!
   } catch (err) {
@@ -35,26 +53,83 @@ router.get("/pessoas", async (req, res) => {
     res
       .status(500)
       .render("erro", { mensagem: "Erro ao carregar lista de pessoas" });
+    res
+      .status(500)
+      .render("erro", { mensagem: "Erro ao carregar lista de pessoas" });
   }
 });
-
 
 // Listar filmes
 router.get("/filmes", async (req, res) => {
   try {
     const filmes = await Filme.findAll({
       include: [
-        { model: Pessoa, as: "diretor", attributes: ["id", "nome"] },
-        { model: Pessoa, as: "produtores", attributes: ["id", "nome"], through: { attributes: [] } },
-        { model: Pessoa, as: "elenco", attributes: ["id", "nome"], through: { attributes: ["is_principal"] } },
+        {
+          model: Pessoa,
+          as: "diretor",
+          attributes: [
+            "id",
+            "nome",
+            "data_nascimento",
+            "sexo",
+            "nacionalidade",
+          ],
+        },
+        {
+          model: Pessoa,
+          as: "produtores",
+          attributes: [
+            "id",
+            "nome",
+            "data_nascimento",
+            "sexo",
+            "nacionalidade",
+          ],
+          through: { attributes: [] },
+        },
+        {
+          model: Pessoa,
+          as: "elenco",
+          attributes: [
+            "id",
+            "nome",
+            "data_nascimento",
+            "sexo",
+            "nacionalidade",
+          ],
+          through: { attributes: ["is_principal"] },
+        },
       ],
       order: [["ano_lancamento", "DESC"]],
     });
 
-    res.render("filmes", { filmes: filmes.map(filme => filme.toJSON()) });
+    // Formatando a data de nascimento dos diretores, produtores e elenco
+    const filmesFormatados = filmes.map((filme) => {
+      return {
+        ...filme.toJSON(),
+        diretor: filme.diretor
+          ? {
+              ...filme.diretor.toJSON(),
+              data_nascimento: formatarData(filme.diretor.data_nascimento),
+            }
+          : null,
+        produtores: filme.produtores.map((prod) => ({
+          ...prod.toJSON(),
+          data_nascimento: formatarData(prod.data_nascimento),
+        })),
+        elenco: filme.elenco.map((ator) => ({
+          ...ator.toJSON(),
+          data_nascimento: formatarData(ator.data_nascimento),
+        })),
+      };
+    });
+
+    res.render("filmes", { filmes: filmesFormatados });
   } catch (err) {
     console.error("Erro ao buscar filmes:", err);
-    res.status(500).render("erro", { mensagem: "Erro ao carregar lista de filmes" });
+    res
+      .status(500)
+      .render("erro", { mensagem: "Erro ao carregar lista de filmes" });
   }
 });
 
@@ -71,7 +146,7 @@ router.get("/filmes/novo", async (req, res) => {
       order: [["nome", "ASC"]],
     });
 
-    res.render("novo-filme", { pessoas: pessoas.map(p => p.toJSON()) });
+    res.render("novo-filme", { pessoas: pessoas.map((p) => p.toJSON()) });
   } catch (err) {
     console.error("Erro ao carregar formulário de filme:", err);
     res.status(500).render("erro", { mensagem: "Erro ao carregar formulário" });

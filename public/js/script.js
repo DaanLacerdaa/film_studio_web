@@ -134,19 +134,28 @@ async function carregarPessoasDoBanco() {
 
   for (const categoria of categorias) {
     const container = document.getElementById(`${categoria}-container`);
+    if (!container) continue;
+
     const pessoasData = container.dataset[categoria];
     if (!pessoasData) {
       console.warn(`Dados de ${categoria} não encontrados.`);
       continue; // Pula para a próxima categoria
     }
 
-    const pessoas = JSON.parse(pessoasData);
+    let pessoas;
+    try {
+      pessoas = JSON.parse(pessoasData);
+    } catch (error) {
+      console.error(`Erro ao parsear os dados de ${categoria}:`, error);
+      continue;
+    }
+
     for (const pessoa of pessoas) {
       const card = criarCardPessoa(
         pessoa,
         "/images/default-person.jpg",
         pessoa.filmes
-      ); // Imagem padrão inicial
+      );
       container.appendChild(card);
 
       try {
@@ -155,21 +164,18 @@ async function carregarPessoasDoBanco() {
 
         if (imgElement) {
           imgElement.onload = () => {
-            imgElement.src = imagemPessoa;
+            console.log(`Imagem carregada com sucesso para ${pessoa.nome}`);
           };
           imgElement.onerror = () => {
             console.error(`Erro ao carregar imagem para ${pessoa.nome}.`);
-            imgElement.src = "images/default-person.jpg";
+            imgElement.src = "/images/default-person.jpg";
           };
-          imgElement.src = "images/default-person.jpg"; // Define o src *antes* do onload
+
+          // Definir a imagem depois dos eventos de onload/onerror estarem definidos
+          imgElement.src = imagemPessoa;
         }
       } catch (error) {
-        console.error(
-          `Erro ao parsear dados de ${categoria}:`,
-          error,
-          pessoasData
-        ); // Mostra os dados que causaram o erro
-        //
+        console.error(`Erro ao buscar imagem para ${pessoa.nome}:`, error);
       }
     }
   }
@@ -186,23 +192,15 @@ async function buscarImagemPessoa(nome) {
     );
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(`Erro na API TMDB: ${response.status}`); // Lança um erro se a resposta não for ok
+    if (!response.ok || !data.results || data.results.length === 0) {
+      console.warn(`Nenhuma imagem encontrada para ${nome}.`);
+      return "/images/default-person.jpg"; // Retorna a imagem padrão
     }
 
-    if (
-      data.results &&
-      data.results.length > 0 &&
-      data.results[0].profile_path
-    ) {
-      return `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`;
-    } else {
-      console.warn(`Nenhuma imagem encontrada para ${nome}.`);
-      return "images/default-person.jpg"; // Retorna a imagem padrão se não encontrar
-    }
+    return `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`;
   } catch (error) {
-    console.error("Erro ao buscar imagem da pessoa:", error);
-    return "images/default-person.jpg";
+    console.error(`Erro ao buscar imagem da API TMDB para ${nome}:`, error);
+    return "/images/default-person.jpg";
   }
 }
 function criarCardFilme(filme, imagem) {
@@ -225,8 +223,9 @@ function criarCardPessoa(pessoa, imagem, filmes) {
       <p>Data de Nascimento: ${pessoa.data_nascimento || "Desconhecido"}</p>
       <p>Sexo: ${pessoa.sexo || "Desconhecido"}</p> 
       <p>Nacionalidade: ${pessoa.nacionalidade || "Desconhecida"}</p>
-      <p>Participações: ${filmes.filmesList || "Desconhecido"}</p>
-
+      <p>Participações: ${
+        Array.isArray(filmes) ? filmes.join(", ") : filmes || "Desconhecido"
+      }</p>
   `;
   return card;
 }
@@ -268,14 +267,14 @@ document.addEventListener("DOMContentLoaded", () => {
 function configurarPopups() {
   let popupAtivo = null;
 
-  document.addEventListener("mouseover", async (e) => {
+  document.addEventListener("mouseover", (e) => {
     if (e.target.classList.contains("popup-trigger") && !popupAtivo) {
       popupAtivo = criarPopup(e.target);
       document.body.appendChild(popupAtivo);
     }
   });
 
-  document.addEventListener("mouseout", (e) => {
+  document.addEventListener("mouseout", () => {
     if (popupAtivo) {
       popupAtivo.remove();
       popupAtivo = null;
@@ -289,8 +288,10 @@ function criarPopup(imgElement) {
   popup.className = "image-popup";
 
   const imgClone = imgElement.cloneNode();
-  imgClone.style.maxWidth = "300px";
-  imgClone.style.maxHeight = "400px";
+  Object.assign(imgClone.style, {
+    maxWidth: "300px",
+    maxHeight: "400px",
+  });
 
   popup.appendChild(imgClone);
   posicionarPopup(popup, imgElement);
@@ -299,9 +300,11 @@ function criarPopup(imgElement) {
 
 function posicionarPopup(popup, target) {
   const rect = target.getBoundingClientRect();
-  popup.style.position = "absolute";
-  popup.style.top = `${rect.top + window.scrollY}px`;
-  popup.style.left = `${rect.left + rect.width + 20}px`;
+  Object.assign(popup.style, {
+    position: "absolute",
+    top: `${rect.top + window.scrollY}px`,
+    left: `${rect.left + rect.width + 20}px`,
+  });
 }
 
 // ========== 🛠️ FUNÇÕES UTILITÁRIAS ==========

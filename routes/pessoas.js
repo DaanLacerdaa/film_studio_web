@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { Pessoa } = require("../models");
 
-// Listar todas as pessoas (agrupadas por tipo)
+// Listar todas as pessoas
+// Listar todas as pessoas agrupadas por tipo
+
 router.get("/", async (req, res) => {
   try {
     const pessoas = await Pessoa.findAll({
@@ -20,23 +22,14 @@ router.get("/", async (req, res) => {
       ],
     });
 
+    // Agrupar os resultados manualmente
     const agrupado = pessoas.reduce((acc, pessoa) => {
       if (!acc[pessoa.tipo]) acc[pessoa.tipo] = [];
       acc[pessoa.tipo].push(pessoa);
       return acc;
     }, {});
 
-    // *** AQUI ESTÁ A CORREÇÃO ***
-    const atores = agrupado.Ator || []; // Obtém os atores do objeto agrupado ou um array vazio
-    const diretores = agrupado.Diretor || []; // Obtém os diretores ou um array vazio
-    const produtores = agrupado.Produtor || []; // Obtém os produtores ou um array vazio
-
-    res.render("pessoas", {
-      pessoasAgrupadas: agrupado,
-      atores: atores, // Passa os atores para a view
-      diretores: diretores, // Passa os diretores para a view
-      produtores: produtores, // Passa os produtores para a view
-    });
+    res.render("pessoas", { pessoasAgrupadas: agrupado });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar pessoas");
@@ -99,6 +92,48 @@ router.post("/deletar/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao deletar pessoa");
+  }
+});
+
+// Listar atores
+router.get("/atores", async (req, res) => {
+  try {
+    const atores = await Pessoa.findAll({
+      where: { tipo: "Ator" },
+      order: [["nome", "ASC"]],
+    });
+    res.render("atores", { atores });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao carregar atores");
+  }
+});
+
+// Listar diretores
+router.get("/diretores", async (req, res) => {
+  try {
+    const diretores = await Pessoa.findAll({
+      where: { tipo: "Diretor" },
+      order: [["nome", "ASC"]],
+    });
+    res.render("diretores", { diretores });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao carregar diretores");
+  }
+});
+
+// Listar produtores
+router.get("/produtores", async (req, res) => {
+  try {
+    const produtores = await Pessoa.findAll({
+      where: { tipo: "Produtor" },
+      order: [["nome", "ASC"]],
+    });
+    res.render("produtores", { produtores });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao carregar produtores");
   }
 });
 
