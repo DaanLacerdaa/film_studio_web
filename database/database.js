@@ -3,7 +3,7 @@
 const { Sequelize } = require("sequelize");
 
 // Configurar a conexão
-const sequelize = new Sequelize("estudio_filmes", "root", "#C4r4muru", {
+const sequelize = new Sequelize("estudio_filmes", "root", "123456789", {
   host: "localhost",
   dialect: "mysql",
 });

@@ -1,8 +1,9 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database/database");
 
-const Producao = sequelize.define(
-  "Producao",
+class Producao extends Model {}
+
+Producao.init(
   {
     filme_id: {
       type: DataTypes.INTEGER,
@@ -26,12 +27,14 @@ const Producao = sequelize.define(
     },
   },
   {
+    sequelize,
+    modelName: "Producao",
     tableName: "producao",
     timestamps: false,
   }
 );
 
-// Validação para PRODUTOR
+// Garante que a pessoa é um PRODUTOR antes de criar um registro em `producao`
 Producao.beforeCreate(async (producao) => {
   const pessoa = await sequelize.models.Pessoa.findByPk(producao.pessoa_id);
   if (!pessoa || pessoa.tipo !== "PRODUTOR") {

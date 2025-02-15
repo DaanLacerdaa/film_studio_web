@@ -1,7 +1,5 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database/database");
-const Pessoa = require("./pessoa");
-const Producao = require("./producao");
 
 class Filme extends Model {}
 
@@ -42,16 +40,11 @@ Filme.init(
     },
   },
   {
-    sequelize,
+    sequelize, // Certifique-se de que está recebendo corretamente o Sequelize
     modelName: "Filme",
     tableName: "filme",
     timestamps: false,
   }
 );
-
-// Definição das associações
-
-
-
 
 module.exports = Filme;

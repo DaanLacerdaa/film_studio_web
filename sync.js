@@ -1,6 +1,6 @@
 // sync.js
 
-const { sequelize, Pessoa, Atuacao, Filme } = require("./models"); // Importando todos os modelos
+const { sequelize, Pessoa, Atuacao, Filme, Producao } = require("./models"); // Importando todos os modelos
 
 (async () => {
   try {

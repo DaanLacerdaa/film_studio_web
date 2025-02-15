@@ -1,39 +1,24 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/database");
+const Pessoa = require("./pessoa");
 
-const Pessoa = sequelize.define(
-  "Pessoa",
+const Produtor = sequelize.define(
+  "Produtor",
+  {},
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    nome: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    data_nascimento: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    sexo: {
-      type: DataTypes.ENUM("Masculino", "Feminino", "Outro"),
-      allowNull: false,
-    },
-    nacionalidade: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    tipo: {
-      type: DataTypes.ENUM("ATOR", "DIRETOR", "PRODUTOR"), // Adicionando um campo para distinguir os tipos
-      allowNull: false,
-    },
-  },
-  {
-    tableName: "pessoa",
+    tableName: "pessoa", // Usa a mesma tabela de Pessoa
     timestamps: false,
   }
 );
 
-module.exports = Pessoa;
+// Configurando associação para filtrar apenas PRODUTORES
+Produtor.hasOne(Pessoa, {
+  foreignKey: "id",
+  sourceKey: "id",
+  constraints: false,
+  scope: {
+    tipo: "PRODUTOR",
+  },
+});
+
+module.exports = Produtor;
