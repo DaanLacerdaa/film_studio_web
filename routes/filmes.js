@@ -50,12 +50,15 @@ router.get("/novo", async (req, res) => {
   try {
     const diretores = await Pessoa.findAll({ where: { tipo: "DIRETOR" } });
     const produtores = await Pessoa.findAll({ where: { tipo: "PRODUTOR" } });
-    res.render("filme_form", { filme: null, diretores, produtores });
+    const atores = await Pessoa.findAll({ where: { tipo: "ATOR" } }); // <- Adiciona "atores"
+
+    res.render("filme_form", { filme: null, diretores, produtores, atores });
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar o formulário de novo filme");
   }
 });
+
 router.post("/novo", async (req, res) => {
   try {
     const { titulo, ano, genero, duracao, idioma, diretor_id, produtores } =
@@ -117,22 +120,19 @@ router.get("/editar/:id", async (req, res) => {
     // Buscar diretores: Pessoas que já estão vinculadas como diretores
     const diretores = await Pessoa.findAll({ where: { tipo: "DIRETOR" } });
 
-    // Buscar produtores: Pessoas que já estão na tabela producao
-    const produtores = await Pessoa.findAll({
-      where: {
-        id: await Producao.findAll({
-          attributes: ["pessoa_id"],
-          raw: true,
-        }).then((res) => res.map((p) => p.pessoa_id)),
-      },
-    });
+    // Buscar produtores
+    const produtores = await Pessoa.findAll({ where: { tipo: "PRODUTOR" } });
 
-    res.render("filme_form", { filme, diretores, produtores });
+    // Buscar atores: Pessoas que já atuam em filmes
+    const atores = await Pessoa.findAll({ where: { tipo: "ATOR" } });
+
+    res.render("filme_form", { filme, diretores, produtores, atores }); // <- Inclui "atores"
   } catch (err) {
     console.error(err);
     res.status(500).send("Erro ao carregar o filme para edição");
   }
 });
+
 // Atualizar um filme
 router.post("/editar/:id", async (req, res) => {
   const {

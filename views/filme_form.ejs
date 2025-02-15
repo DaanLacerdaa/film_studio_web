@@ -47,12 +47,13 @@
 
     <label for="produtores">Produtores:</label>
 <select id="produtores" name="produtores" multiple>
-  <% produtores.forEach(produtor => { %>
+  <% if (produtores) { produtores.forEach(produtor => { %>
     <option value="<%= produtor.id %>"
-      <%= filme && filme.produtores && filme.produtores.some(p => p.id === produtor.id) ? 'selected' : '' %> >
+      <%= filme && filme.produtores && Array.isArray(filme.produtores) && filme.produtores.some(p => p.id === produtor.id) ? 'selected' : '' %> >
       <%= produtor.nome %>
     </option>
-  <% }) %>
+  <% }) } %>
+  
 </select>
 <br><br>
 

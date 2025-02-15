@@ -32,20 +32,24 @@ async function carregarFilmesDoBanco() {
 
       card.innerHTML = `
         <h2>${filme.titulo} (${filme.ano_lancamento})</h2>
-        <p><strong>Duração:</strong> ${filme.duracao} min</p>
-        <p><strong>Idioma:</strong> ${filme.idioma}</p>
-        <p><strong>Gênero:</strong> ${filme.genero}</p>
+        <p><strong>Duração:</strong> ${filme.duracao || "N/A"} min</p>
+        <p><strong>Idioma:</strong> ${filme.idioma || "Desconhecido"}</p>
+        <p><strong>Gênero:</strong> ${filme.genero || "Desconhecido"}</p>
         <p><strong>Diretor:</strong> ${
           filme.diretor?.nome || "Desconhecido"
         }</p>
         <p><strong>Produtores:</strong> ${
-          filme.produtores?.map((p) => p.nome).join(", ") || "Nenhum"
+          Array.isArray(filme.produtores) && filme.produtores.length > 0
+            ? filme.produtores.map((p) => p.nome).join(", ")
+            : "Nenhum"
         }</p>
         <p><strong>Atores Principais:</strong> ${
-          filme.elenco
-            ?.filter((a) => a.Atuacao.is_principal)
-            .map((a) => a.nome)
-            .join(", ") || "Nenhum"
+          Array.isArray(filme.elenco) && filme.elenco.length > 0
+            ? filme.elenco
+                .filter((a) => a.Atuacao?.is_principal)
+                .map((a) => a.nome)
+                .join(", ")
+            : "Nenhum"
         }</p>
         <p><strong>Título Original:</strong> ${
           filmeDadosExternos?.tituloOriginal || "N/A"
@@ -131,25 +135,42 @@ async function buscarFilme(titulo) {
 
 async function buscarImagensPessoas(nomes) {
   const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
-  const promessas = nomes.map((nome) =>
-    fetch(
-      `https://api.themoviedb.org/3/search/person?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
-        nome
-      )}`
-    )
-      .then((res) => res.json())
-      .then((data) => ({
-        nome,
-        imagem: data.results?.[0]?.profile_path
-          ? `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`
-          : "/images/default-person.jpg",
-      }))
-      .catch(() => ({ nome, imagem: "/images/default-person.jpg" }))
-  );
+  const baseURL = "https://api.themoviedb.org/3/search/person";
+  const defaultImage = "/images/default-person.jpg"; // Caminho da imagem padrão
+
+  const promessas = nomes.map(async (nome) => {
+    const nomeFormatado = nome.trim();
+    if (!nomeFormatado) return { nome, imagem: defaultImage };
+
+    try {
+      const response = await fetch(
+        `${baseURL}?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
+          nomeFormatado
+        )}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      if (data.results?.length > 0 && data.results[0].profile_path) {
+        return {
+          nome,
+          imagem: `https://image.tmdb.org/t/p/w500${data.results[0].profile_path}`,
+        };
+      }
+
+      console.warn(`Imagem não encontrada para: ${nome}`);
+    } catch (error) {
+      console.error(`Erro ao buscar imagem para ${nome}:`, error.message);
+    }
+
+    return { nome, imagem: defaultImage }; // Retorna imagem padrão em caso de erro
+  });
 
   return Promise.all(promessas);
 }
-
 async function carregarPessoasDoBanco() {
   const categorias = ["atores", "diretores", "produtores"];
 
@@ -157,40 +178,81 @@ async function carregarPessoasDoBanco() {
     const container = document.getElementById(`${categoria}-container`);
     if (!container) continue;
 
-    const pessoasData = container.dataset[categoria];
-    if (!pessoasData) {
-      console.warn(`Dados de ${categoria} não encontrados.`);
-      continue;
-    }
-
-    let pessoas;
     try {
-      pessoas = JSON.parse(pessoasData);
-    } catch (error) {
-      console.error(`Erro ao parsear os dados de ${categoria}:`, error);
-      continue;
-    }
-
-    container.innerHTML = ""; // Limpa o container antes de adicionar novos cards
-
-    for (const pessoa of pessoas) {
-      const imagemPadrao = "/images/default-person.jpg";
-      const card = criarCardPessoa(pessoa, imagemPadrao, pessoa.filmes);
-      container.appendChild(card);
-
-      try {
-        const imagemPessoa = await buscarImagemPessoa(pessoa.nome);
-        const imgElement = card.querySelector("img");
-
-        if (imgElement) {
-          imgElement.src = imagemPessoa;
-        }
-      } catch (error) {
-        console.error(`Erro ao buscar imagem para ${pessoa.nome}:`, error);
+      const response = await fetch(`/pessoas/${categoria}`); // 🔹 Agora deve funcionar corretamente
+      if (!response.ok) {
+        throw new Error(
+          `Erro HTTP ${response.status} ao carregar ${categoria}`
+        );
       }
+
+      const pessoas = await response.json();
+      if (!Array.isArray(pessoas) || pessoas.length === 0) {
+        console.warn(`Nenhuma pessoa encontrada na categoria ${categoria}.`);
+        continue;
+      }
+
+      container.innerHTML = ""; // Limpa o container antes de adicionar novos cards
+      const nomes = pessoas.map((pessoa) => pessoa.nome.trim()).filter(Boolean);
+      const imagensPessoas = await buscarImagensPessoas(nomes);
+
+      pessoas.forEach((pessoa) => {
+        const dadosImagem = imagensPessoas.find(
+          (img) => img.nome === pessoa.nome
+        );
+        const imagem = dadosImagem ? dadosImagem.imagem : defaultImage;
+        const card = criarCardPessoa(pessoa, imagem, pessoa.filmes);
+        container.appendChild(card);
+      });
+    } catch (error) {
+      console.error(`Erro ao carregar ${categoria}:`, error);
     }
   }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const tipoFiltro = document.getElementById("tipoFiltro");
+  if (tipoFiltro) {
+    tipoFiltro.addEventListener("change", async function () {
+      const tipoSelecionado = this.value;
+      const url = `/pessoas/${encodeURIComponent(tipoSelecionado)}`;
+
+      try {
+        const response = await fetch(url, {
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Erro HTTP ${response.status}`);
+        }
+
+        const dados = await response.json();
+        atualizarLista(dados);
+      } catch (error) {
+        console.error("Erro ao buscar pessoas:", error);
+      }
+    });
+  }
+
+  carregarPessoasDoBanco(); // 🔹 Agora deve carregar corretamente ao iniciar
+});
+
+function atualizarLista(pessoas) {
+  const lista = document.getElementById("listaPessoas");
+  lista.innerHTML = "";
+
+  if (pessoas.length === 0) {
+    lista.innerHTML = "<li>Nenhuma pessoa encontrada.</li>";
+    return;
+  }
+
+  pessoas.forEach((pessoa) => {
+    const item = document.createElement("li");
+    item.textContent = `${pessoa.nome} - ${pessoa.tipo}`;
+    lista.appendChild(item);
+  });
+}
+
 function criarCardFilme(filme, imagem) {
   const card = document.createElement("div");
   card.className = "card-filme";
@@ -208,7 +270,7 @@ function criarCardPessoa(pessoa, imagem, filmes) {
   card.innerHTML = `
       <img src="${imagem}" alt="${pessoa.nome}">
       <h3>${pessoa.nome}</h3>
-      <p>Data de Nascimento: ${pessoa.data_nascimento || "Desconhecido"}</p>
+      <p>Data de Nascimento: ${formatarData(pessoa.data_nascimento)}</p>
       <p>Sexo: ${pessoa.sexo || "Desconhecido"}</p> 
       <p>Nacionalidade: ${pessoa.nacionalidade || "Desconhecida"}</p>
       <p>Participações: ${
@@ -218,7 +280,7 @@ function criarCardPessoa(pessoa, imagem, filmes) {
   return card;
 }
 
-// Funções auxiliares
+// Função corrigida para formatar data corretamente
 function formatarData(data) {
   return data ? new Date(data).toLocaleDateString("pt-BR") : "N/A";
 }

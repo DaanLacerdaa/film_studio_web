@@ -26,13 +26,13 @@ Pessoa.belongsToMany(Filme, {
 Filme.belongsToMany(Pessoa, {
   through: Producao,
   foreignKey: "filme_id",
-  otherKey: "produtor_id",
+  otherKey: "produtorId", // <- Alterado para combinar com o model Sequelize
   as: "produtores",
 });
 
 Pessoa.belongsToMany(Filme, {
   through: Producao,
-  foreignKey: "pessoa_id",
+  foreignKey: "produtorId", // <- Alterado para combinar com o model Sequelize
   otherKey: "filme_id",
   as: "filmes_produzidos",
 });

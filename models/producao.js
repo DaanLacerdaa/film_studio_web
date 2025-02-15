@@ -1,13 +1,19 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database/database");
+const Pessoa = require("./pessoa"); // Importa Pessoa para validação
 
 class Producao extends Model {}
 
 Producao.init(
   {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     filme_id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
+      allowNull: false,
       references: {
         model: "filme",
         key: "id",
@@ -15,9 +21,11 @@ Producao.init(
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     },
-    produtor_id: {
+    produtorId: {
+      // Definição no modelo Sequelize
       type: DataTypes.INTEGER,
-      primaryKey: true,
+      allowNull: false,
+      field: "produtor_id", // Nome da coluna real no banco de dados
       references: {
         model: "pessoa",
         key: "id",
@@ -35,10 +43,12 @@ Producao.init(
 );
 
 // Garante que a pessoa é um PRODUTOR antes de criar um registro em `producao`
-Producao.beforeCreate(async (producao) => {
-  const pessoa = await sequelize.models.Pessoa.findByPk(producao.produtor_id);
+Producao.beforeValidate(async (producao) => {
+  const pessoa = await Pessoa.findByPk(producao.produtorId);
   if (!pessoa || pessoa.tipo !== "PRODUTOR") {
-    throw new Error("A pessoa deve ser PRODUTOR.");
+    throw new Error(
+      "A pessoa deve ser um PRODUTOR para ser vinculada a uma produção."
+    );
   }
 });
 
