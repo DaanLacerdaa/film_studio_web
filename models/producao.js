@@ -15,7 +15,7 @@ Producao.init(
       onDelete: "CASCADE",
       onUpdate: "CASCADE",
     },
-    pessoa_id: {
+    produtor_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
@@ -36,7 +36,7 @@ Producao.init(
 
 // Garante que a pessoa é um PRODUTOR antes de criar um registro em `producao`
 Producao.beforeCreate(async (producao) => {
-  const pessoa = await sequelize.models.Pessoa.findByPk(producao.pessoa_id);
+  const pessoa = await sequelize.models.Pessoa.findByPk(producao.produtor_id);
   if (!pessoa || pessoa.tipo !== "PRODUTOR") {
     throw new Error("A pessoa deve ser PRODUTOR.");
   }
