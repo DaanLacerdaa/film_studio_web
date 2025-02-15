@@ -15,8 +15,7 @@
 
 /* Variáveis de tema */
 :root {
-  /* Dark Theme Default */
-  --bg-color: #e50914
+  --bg-color: #e50914; /* Corrigido */
   --text-color: #f0f0f0;
   --primary-color: #e50914;
   --hover-color: #b20710;
@@ -28,6 +27,7 @@
   --nav-bg: rgba(51, 51, 51, 0.9);
   --footer-bg: #121212;
 }
+
 /* ========== TOGGLE CINEMATOGRÁFICO ========== */
 #switch {
   position: fixed;
@@ -44,8 +44,6 @@
   z-index: 1000;
   overflow: hidden;
 }
-
-
 
 /* Esconder input checkbox */
 #tema-toggle {
@@ -175,16 +173,14 @@
 }
 
 @keyframes popcornJump {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
     transform: translateY(-5px);
   }
 }
-
-
-  
 
 /* === ANIMAÇÕES === */
 @keyframes filmScroll {
@@ -197,7 +193,8 @@
 }
 
 @keyframes popcornJump {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -206,12 +203,9 @@
 }
 
 /* === TOGGLE INTERATIVO === */
-#tema-toggle:checked + .slider + #contentwrapper #claquete {
-  left: calc(100% - 35px);
-  background: var(--hover-color);
+#tema-toggle:checked ~ .slider #claquete {
   transform: translateX(40px);
-
-
+  background: var(--hover-color);
 }
 
 [data-theme="light"] {
@@ -285,11 +279,12 @@ h2 {
 
 #claquete::before {
   content: "🎬";
-  position: absolute;
-  font-size: 30px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 /* Elementos Temáticos */
@@ -608,16 +603,6 @@ nav {
   background: #b20710; /* Tom mais escuro para hover */
 }
 
-/* Estilos gerais */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Goudy Bookletter 1911", sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
 /* Cards */
 .card {
   background: var(--card-bg);
@@ -633,13 +618,11 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-
 .card strong {
   color: var(--text-color);
-
 }
 
-.card p{
+.card p {
   color: var(--text-color);
 }
 
@@ -720,16 +703,6 @@ body {
   --footer-bg: #e0e0e0;
 }
 
-/* Estilos adicionais */
-body,
-nav,
-footer,
-table,
-form {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
 /* Responsividade */
 @media screen and (max-width: 768px) {
   #switch {
@@ -755,7 +728,7 @@ form {
 }
 
 [data-theme="dark"] {
-  --card-bg:#333 ;
+  --card-bg: #333;
   --card-text: #ffffff;
   --card-border: #ddd;
 }
@@ -784,7 +757,6 @@ form {
   color: white !important;
   border: 1px solid var(--hover-color);
 }
-
 
 .actions button {
   background: var(--card-bg);
@@ -885,7 +857,8 @@ label {
   font-family: "Cinema", serif;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
@@ -903,14 +876,13 @@ button {
   background-color: var(--primary-color);
   color: #fff;
   font-size: 18px;
-  font-weight:light;
+  font-weight: light;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease;
   margin-top: 15px;
   font-family: "Broadway", sans-serif;
-  
 }
 
 button:hover {
@@ -938,7 +910,6 @@ h1 {
   color: var(--primary-color);
 }
 
-
 .cinema-mode .icon {
-    color: #ff5733;
+  color: #ff5733;
 }
