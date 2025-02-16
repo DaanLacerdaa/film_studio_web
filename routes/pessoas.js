@@ -15,11 +15,17 @@ router.get("/novo", (req, res) => {
 router.post("/", async (req, res) => {
   const { nome, data_nascimento, sexo, nacionalidade, tipo } = req.body;
   try {
-    await Pessoa.create({ nome, data_nascimento, sexo, nacionalidade, tipo });
-    res.redirect("/pessoas");
+    const novaPessoa = await Pessoa.create({
+      nome,
+      data_nascimento,
+      sexo,
+      nacionalidade,
+      tipo,
+    });
+    res.json(novaPessoa);
   } catch (err) {
     console.error("Erro ao adicionar pessoa:", err);
-    res.status(500).send("Erro ao adicionar pessoa");
+    res.status(500).json({ erro: "Erro ao adicionar pessoa" });
   }
 });
 
@@ -37,6 +43,7 @@ router.get("/editar/:id", async (req, res) => {
 });
 
 // Atualizar pessoa
+// Atualizar pessoa
 router.post("/editar/:id", async (req, res) => {
   const { nome, data_nascimento, sexo, nacionalidade, tipo } = req.body;
   try {
@@ -44,10 +51,10 @@ router.post("/editar/:id", async (req, res) => {
       { nome, data_nascimento, sexo, nacionalidade, tipo },
       { where: { id: req.params.id } }
     );
-    res.redirect("/pessoas");
+    res.json({ mensagem: "Pessoa atualizada com sucesso" });
   } catch (err) {
     console.error("Erro ao atualizar pessoa:", err);
-    res.status(500).send("Erro ao atualizar pessoa");
+    res.status(500).json({ erro: "Erro ao atualizar pessoa" });
   }
 });
 
@@ -55,45 +62,16 @@ router.post("/editar/:id", async (req, res) => {
 router.post("/deletar/:id", async (req, res) => {
   try {
     const pessoa = await Pessoa.findByPk(req.params.id);
-    if (!pessoa) return res.status(404).send("Pessoa não encontrada");
+    if (!pessoa) return res.status(404).json({ erro: "Pessoa não encontrada" });
 
     await pessoa.destroy();
-    res.redirect("/pessoas");
+    res.json({ mensagem: "Pessoa deletada com sucesso" });
   } catch (err) {
     console.error("Erro ao deletar pessoa:", err);
-    res.status(500).send("Erro ao deletar pessoa");
+    res.status(500).json({ erro: "Erro ao deletar pessoa" });
   }
 });
 
-// Listar pessoas por tipo
-router.get("/:tipo", async (req, res) => {
-  try {
-    const { tipo } = req.params; // Pega o parâmetro da URL
-    const tiposValidos = ["atores", "produtores", "diretores"]; // Lista dos tipos aceitos
-
-    if (!tiposValidos.includes(tipo)) {
-      return res.status(400).json({ erro: "Tipo inválido de pessoa" });
-    }
-
-    const pessoas = await Pessoa.findAll({
-      attributes: [
-        "id",
-        "nome",
-        "tipo",
-        "data_nascimento",
-        "sexo",
-        "nacionalidade",
-      ],
-      where: { tipo },
-      order: [["nome", "ASC"]],
-    });
-
-    return res.json(pessoas.length ? pessoas : []);
-  } catch (err) {
-    console.error("Erro ao carregar pessoas:", err);
-    res.status(500).json({ erro: "Erro ao carregar pessoas" });
-  }
-});
 // Listar atores
 router.get("/atores", async (req, res) => {
   try {

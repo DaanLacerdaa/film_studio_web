@@ -29,33 +29,18 @@ router.get("/pessoas", async (req, res) => {
         ...pessoa.toJSON(),
         data_nascimento: formatarData(pessoa.data_nascimento),
       });
-      acc[tipo].push({
-        ...pessoa.toJSON(),
-        data_nascimento: formatarData(pessoa.data_nascimento),
-      });
       return acc;
     }, {});
 
     console.log(
-      "Enviando para a view:",
+      "Enviando JSON para a view:",
       JSON.stringify(groupedPeople, null, 2)
     );
 
-    res.render("pessoas", { pessoas: groupedPeople }); // <-- AQUI, nome correto!
-    console.log(
-      "Enviando para a view:",
-      JSON.stringify(groupedPeople, null, 2)
-    );
-
-    res.render("pessoas", { pessoas: groupedPeople }); // <-- AQUI, nome correto!
+    res.json(groupedPeople); // Agora retorna um JSON para o frontend
   } catch (err) {
     console.error("Erro ao buscar pessoas:", err);
-    res
-      .status(500)
-      .render("erro", { mensagem: "Erro ao carregar lista de pessoas" });
-    res
-      .status(500)
-      .render("erro", { mensagem: "Erro ao carregar lista de pessoas" });
+    res.status(500).json({ erro: "Erro ao carregar lista de pessoas" });
   }
 });
 
