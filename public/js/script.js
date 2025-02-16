@@ -138,39 +138,32 @@ async function buscarFilme(titulo) {
 // ========== 🌐 FUNÇÕES DE API ==========
 async function buscarImagemPessoa(nome) {
   const baseURL = "https://api.themoviedb.org/3/search/person";
-  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
-  const defaultImage = "/images/default-person.jpg";
-  // Formatação do nome para a query
-  const nomeFormatado = nome.trim().toLowerCase();
-  if (!nomeFormatado) return defaultImage;
-  const query = encodeURIComponent(nome)
-    .replace(/%20/g, "+") // Espaços para '+'
-    .replace(/%2B/g, "+") // Mantém sinais de '+'
+
+  // Formatação avançada do nome
+  const query = nome
+    .trim()
+    .replace(/[+]|%20/g, " ") // Remove formatação anterior
+    .replace(/\s+/g, "+") // Novo padrão de espaços
     .toLowerCase();
 
   try {
     const response = await fetch(
-      `${baseURL}?api_key=${apiKeyTMDB}&query=${query}&language=pt-BR`
+      `${baseURL}?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
+        query
+      )}&language=pt-BR`
     );
 
-    if (!response.ok) {
-      throw new Error(`Erro HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`Erro ${response.status}`);
 
     const data = await response.json();
+    const resultado = data.results?.[0];
 
-    // Verifica resultados e caminho da imagem
-    if (data.results?.[0]?.profile_path) {
-      const tamanhos = ["w185", "w342", "original"];
-      return tamanhos.map(
-        (t) => `https://image.tmdb.org/t/p/${t}${data.results[0].profile_path}`
-      )[0];
-    }
-
-    console.warn(`Imagem não encontrada para: ${nome}`);
-    return defaultImage;
+    // Verificação hierárquica
+    return resultado?.profile_path
+      ? `https://image.tmdb.org/t/p/w500${resultado.profile_path}`
+      : defaultImage;
   } catch (error) {
-    console.error(`Erro ao buscar imagem para ${nome}:`, error.message);
+    console.error(`Falha na busca por ${nome}:`, error.message);
     return defaultImage;
   }
 }
@@ -180,20 +173,31 @@ function criarCardPessoa(pessoa, imagemURL) {
   const card = document.createElement("div");
   card.className = "card-pessoa";
 
-  // Usar a variável global corretamente
-  const imagem = imagemURL?.startsWith("http") ? imagemURL : defaultImage; // ← Agora usando a variável global
+  const imagem = imagemURL.startsWith("http") ? imagemURL : defaultImage;
 
   card.innerHTML = `
-    <img src="${imagem}" alt="${pessoa.nome}" class="foto-perfil">
+    <img src="${imagem}" 
+         alt="${pessoa.nome}" 
+         class="foto-perfil ${
+           !imagemURL.includes("default") ? "popup-trigger" : ""
+         }"
+         onerror="this.src='${defaultImage}'">
+    
     <div class="info-pessoa">
-        <h3>${pessoa.nome}</h3>
-        <p><strong>Nascimento:</strong> ${formatarData(
-          pessoa.data_nascimento
-        )}</p>
-        <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade || "N/A"}</p>
-        <p><strong>Sexo:</strong> ${pessoa.sexo || "N/A"}</p>
-        <p><strong>Tipo:</strong> ${pessoa.tipo || "N/A"}</p>
-        ${gerarDetalhesFilmes(pessoa)}
+      <h3>${pessoa.nome}</h3>
+      ${Object.entries({
+        Nascimento: formatarData(pessoa.data_nascimento),
+        Nacionalidade: pessoa.nacionalidade,
+        Sexo: pessoa.sexo,
+        Tipo: pessoa.tipo,
+      })
+        .map(
+          ([key, val]) => `
+        <p><strong>${key}:</strong> ${val || "N/A"}</p>
+      `
+        )
+        .join("")}
+      ${gerarDetalhesFilmes(pessoa)}
     </div>
   `;
 
@@ -202,46 +206,40 @@ function criarCardPessoa(pessoa, imagemURL) {
 
 // ========== 🚀 CARREGAMENTO DE DADOS ==========
 async function carregarPessoasDoBanco() {
-  const categorias = ["ATOR", "DIRETOR", "PRODUTOR"];
+  const categorias = ["Ator", "Diretor", "Produtor"]; // Minúsculas para match com IDs
 
   for (const categoria of categorias) {
-    const container = document.getElementById(
-      `${categoria.toLowerCase()}-container`
-    );
-    if (!container) continue;
+    const container = document.getElementById(`${categoria}-container`);
+    if (!container) {
+      console.warn(`Container ${categoria} não encontrado`);
+      continue;
+    }
 
-    // Acesso correto ao dataset (categoria em minúsculas)
-    const pessoasData = container.dataset[categoria.toLowerCase()];
+    const pessoasData = container.dataset[categoria];
     if (!pessoasData) {
-      console.warn(`Dados de ${categoria} não encontrados.`);
+      console.warn(`Dados para ${categoria} ausentes`);
       continue;
     }
 
-    let pessoas;
     try {
-      pessoas = JSON.parse(pessoasData);
+      const pessoas = JSON.parse(pessoasData);
+      if (!Array.isArray(pessoas)) throw new Error("Dados inválidos");
+
+      container.innerHTML = "";
+
+      // Processamento paralelo
+      const cards = await Promise.all(
+        pessoas.map(async (pessoa) => {
+          if (!pessoa?.nome) return null;
+
+          const imagem = await buscarImagemPessoa(pessoa.nome);
+          return criarCardPessoa(pessoa, imagem);
+        })
+      );
+
+      cards.forEach((card) => card && container.appendChild(card));
     } catch (error) {
-      console.error(`Erro ao parsear dados de ${categoria}:`, error);
-      continue;
-    }
-
-    if (!Array.isArray(pessoas) || pessoas.length === 0) {
-      console.warn(`Nenhuma pessoa encontrada em ${categoria}.`);
-      continue;
-    }
-
-    container.innerHTML = ""; // Limpar container
-
-    // Processar cada pessoa individualmente
-    for (const pessoa of pessoas) {
-      if (!pessoa?.nome) {
-        console.warn("Pessoa inválida:", pessoa);
-        continue;
-      }
-
-      const imagem = await buscarImagemPessoa(pessoa.nome);
-      const card = criarCardPessoa(pessoa, imagem);
-      container.appendChild(card);
+      console.error(`Erro em ${categoria}:`, error);
     }
   }
 }
