@@ -2,9 +2,9 @@ const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database/database");
 const Pessoa = require("./pessoa"); // Importa Pessoa para validação
 
-class Producao extends Model {}
+class Direcao extends Model {}
 
-Producao.init(
+Direcao.init(
   {
     id: {
       type: DataTypes.INTEGER,
