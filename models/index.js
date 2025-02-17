@@ -37,7 +37,7 @@ Pessoa.belongsToMany(Filme, {
 Filme.belongsToMany(Pessoa, {
   through: Producao,
   foreignKey: "filme_id",
-  otherKey: "pessoa_id",
+  otherKey: "produtor_id",
   as: "produtores",
 });
 Pessoa.belongsToMany(Filme, {
