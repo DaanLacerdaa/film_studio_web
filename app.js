@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const authRoutes = require("./routes/auth");
 const authMiddleware = require("./middlewares/auth");
+const flash = require("connect-flash");
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -58,6 +59,21 @@ app.use(
   })
 );
 
+app.use(
+  session({
+    secret: "seuSegredoSuperSeguro",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }, // Use "true" se estiver em HTTPS
+  })
+);
+
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.messages = req.flash();
+  next();
+});
+
 // Usar as rotas de autenticação
 app.use(authRoutes);
 
@@ -66,10 +82,6 @@ app.get("/", authMiddleware, (req, res) => {
   res.send(
     `<h1>Bem-vindo, ${req.session.user.name}!</h1><a href="/logout">Sair</a>`
   );
-});
-
-app.listen(3000, () => {
-  console.log("Servidor rodando em http://localhost:3000");
 });
 
 // Inicialização do servidor
