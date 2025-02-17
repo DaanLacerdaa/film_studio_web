@@ -46,6 +46,72 @@
         text-decoration: none;
         cursor: pointer;
       }
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 20px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .filmes-lista {
+        margin-top: 15px;
+        padding-left: 20px;
+        text-align: left;
+      }
+      .filmes-lista li {
+        margin: 5px 0;
+        color: #666;
+      }
+
+      .card h2 {
+        margin: 10px 0;
+      }
+      .card p {
+        margin: 5px 0;
+        color: #555;
+      }
+      .card .actions {
+        margin-top: 10px;
+      }
+      .card .actions a {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-color);
+        color: #fff;
+        font-size: 18px;
+        font-weight: light;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 15px;
+        font-family: "Broadway", sans-serif;
+      }
+      .card .actions button {
+        text-decoration: none;
+        color: white;
+        background: #dc3545;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 5px;
+        display: inline-block;
+      }
+      .card .actions a,
+      .card .actions button {
+        background: #dc3545;
+        border: none;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>

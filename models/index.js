@@ -1,40 +1,45 @@
-const sequelize = require("../database/database"); // IMPORTA PRIMEIRO O SEQUELIZE
+const sequelize = require("../database/database"); // Conexão
 const Pessoa = require("./pessoa");
 const Filme = require("./Filme");
 const Atuacao = require("./atuacao");
 const Producao = require("./producao");
 
-// Definição de Associações
-Pessoa.hasMany(Filme, { foreignKey: "diretor_id", as: "filmes_dirigidos" });
+// Relacionamento Diretor - Filme
+Pessoa.hasMany(Filme, {
+  foreignKey: "diretor_id",
+  as: "filmes_dirigidos",
+  scope: { tipo: "DIRETOR" },
+});
 Filme.belongsTo(Pessoa, { foreignKey: "diretor_id", as: "diretor" });
 
+// Relacionamento Ator - Filme (N:N)
 Filme.belongsToMany(Pessoa, {
   through: Atuacao,
   foreignKey: "filme_id",
   otherKey: "pessoa_id",
   as: "elenco",
 });
-
 Pessoa.belongsToMany(Filme, {
   through: Atuacao,
   foreignKey: "pessoa_id",
   otherKey: "filme_id",
   as: "atuacoes",
+  scope: { tipo: "ATOR" },
 });
 
-// Filme - Produtores (N:N)
+// Relacionamento Produtor - Filme (N:N)
 Filme.belongsToMany(Pessoa, {
   through: Producao,
   foreignKey: "filme_id",
-  otherKey: "produtorId", // <- Alterado para combinar com o model Sequelize
+  otherKey: "produtorId",
   as: "produtores",
 });
-
 Pessoa.belongsToMany(Filme, {
   through: Producao,
-  foreignKey: "produtorId", // <- Alterado para combinar com o model Sequelize
+  foreignKey: "produtorId",
   otherKey: "filme_id",
   as: "filmes_produzidos",
+  scope: { tipo: "PRODUTOR" },
 });
 
 // Testa conexão antes de sincronizar

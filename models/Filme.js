@@ -46,5 +46,11 @@ Filme.init(
     timestamps: false,
   }
 );
+Filme.beforeCreate(async (filme) => {
+  const pessoa = await Pessoa.findByPk(filme.diretor_id);
+  if (!pessoa || pessoa.tipo !== "DIRETOR") {
+    throw new Error("O diretor_id deve pertencer a um DIRETOR.");
+  }
+});
 
 module.exports = Filme;

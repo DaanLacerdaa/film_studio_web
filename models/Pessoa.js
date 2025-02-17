@@ -19,10 +19,18 @@ Pessoa.init(
     },
   },
   {
-    sequelize, // Certifique-se de que está recebendo corretamente o Sequelize
+    sequelize,
     modelName: "Pessoa",
     tableName: "pessoa",
     timestamps: false,
+    defaultScope: {
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+    },
+    scopes: {
+      atores: { where: { tipo: "ATOR" } },
+      diretores: { where: { tipo: "DIRETOR" } },
+      produtores: { where: { tipo: "PRODUTOR" } },
+    },
   }
 );
 

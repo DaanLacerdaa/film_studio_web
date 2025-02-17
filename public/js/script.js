@@ -137,33 +137,28 @@ async function buscarFilme(titulo) {
 }
 // ========== 🌐 FUNÇÕES DE API ==========
 async function buscarImagemPessoa(nome) {
+  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294"; // Adicionar chave
+  const defaultImage = "/images/default-person.jpg"; // Definir fallback
   const baseURL = "https://api.themoviedb.org/3/search/person";
-
-  // Formatação avançada do nome
   const query = nome
-    .trim()
-    .replace(/[+]|%20/g, " ") // Remove formatação anterior
-    .replace(/\s+/g, "+") // Novo padrão de espaços
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/\s+/g, "+") // Espaços para '+'
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, ""); // Remove acentos
 
   try {
     const response = await fetch(
-      `${baseURL}?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
-        query
-      )}&language=pt-BR`
+      `${baseURL}?api_key=${apiKeyTMDB}&query=${query}&language=pt-BR`
     );
 
     if (!response.ok) throw new Error(`Erro ${response.status}`);
 
     const data = await response.json();
-    const resultado = data.results?.[0];
+    const perfil = data.results?.[0]?.profile_path;
 
-    // Verificação hierárquica
-    return resultado?.profile_path
-      ? `https://image.tmdb.org/t/p/w500${resultado.profile_path}`
-      : defaultImage;
+    return perfil ? `https://image.tmdb.org/t/p/w500${perfil}` : defaultImage;
   } catch (error) {
-    console.error(`Falha na busca por ${nome}:`, error.message);
+    console.error(`Falha na busca por ${nome}:`, error);
     return defaultImage;
   }
 }
@@ -171,33 +166,43 @@ async function buscarImagemPessoa(nome) {
 // ========== 🃏 CRIAÇÃO DE CARDS ==========
 function criarCardPessoa(pessoa, imagemURL) {
   const card = document.createElement("div");
-  card.className = "card-pessoa";
+  card.className = "card";
 
-  const imagem = imagemURL.startsWith("http") ? imagemURL : defaultImage;
+  const img = new Image();
+  img.src = imagemURL;
+  img.alt = `Foto de ${pessoa.nome}`;
+  img.onerror = () => (img.src = defaultImage); // Fallback robusto
+
+  const filmesHTML =
+    pessoa.filmes && pessoa.filmes.length > 0
+      ? `<div class="filmes-lista">
+         <strong>Participações:</strong>
+         <ul>
+           ${pessoa.filmes
+             .map((f) => `<li>${f.titulo} (${f.ano_lancamento || "N/A"})</li>`)
+             .join("")}
+         </ul>
+       </div>`
+      : "";
 
   card.innerHTML = `
-    <img src="${imagem}" 
-         alt="${pessoa.nome}" 
-         class="foto-perfil ${
-           !imagemURL.includes("default") ? "popup-trigger" : ""
-         }"
-         onerror="this.src='${defaultImage}'">
-    
-    <div class="info-pessoa">
-      <h3>${pessoa.nome}</h3>
-      ${Object.entries({
-        Nascimento: formatarData(pessoa.data_nascimento),
-        Nacionalidade: pessoa.nacionalidade,
-        Sexo: pessoa.sexo,
-        Tipo: pessoa.tipo,
-      })
-        .map(
-          ([key, val]) => `
-        <p><strong>${key}:</strong> ${val || "N/A"}</p>
-      `
-        )
-        .join("")}
-      ${gerarDetalhesFilmes(pessoa)}
+    <div class="person-photo">
+      <img src="${imagemURL}" alt="Foto de ${pessoa.nome}" class="profile-img">
+    </div>
+    <div class="detalhes-pessoa">
+      <h2>${pessoa.nome}</h2>
+      <p><strong>Nascimento:</strong> ${formatarData(
+        pessoa.data_nascimento
+      )}</p>
+      <p><strong>Sexo:</strong> ${pessoa.sexo || "N/A"}</p>
+      <p><strong>Nacionalidade:</strong> ${pessoa.nacionalidade}</p>
+      ${filmesHTML}
+    </div>
+    <div class="actions">
+      <a href="/pessoas/editar/${pessoa.id}" class="btn-editar">Editar</a>
+      <form action="/pessoas/deletar/${pessoa.id}" method="POST">
+        <button type="submit" class="btn-excluir">Excluir</button>
+      </form>
     </div>
   `;
 
@@ -206,44 +211,35 @@ function criarCardPessoa(pessoa, imagemURL) {
 
 // ========== 🚀 CARREGAMENTO DE DADOS ==========
 async function carregarPessoasDoBanco() {
-  const categorias = ["Ator", "Diretor", "Produtor"]; // Minúsculas para match com IDs
+  const categorias = [
+    { nome: "ator", containerId: "ator-container" },
+    { nome: "diretor", containerId: "diretor-container" },
+    { nome: "produtor", containerId: "produtor-container" },
+  ];
 
-  for (const categoria of categorias) {
-    const container = document.getElementById(`${categoria}-container`);
-    if (!container) {
-      console.warn(`Container ${categoria} não encontrado`);
-      continue;
-    }
-
-    const pessoasData = container.dataset[categoria];
-    if (!pessoasData) {
-      console.warn(`Dados para ${categoria} ausentes`);
-      continue;
-    }
+  for (const { nome, containerId } of categorias) {
+    const container = document.getElementById(containerId);
+    if (!container) continue;
 
     try {
-      const pessoas = JSON.parse(pessoasData);
-      if (!Array.isArray(pessoas)) throw new Error("Dados inválidos");
+      const dadosBrutos = container.dataset[nome];
+      if (!dadosBrutos) throw new Error("Dados não encontrados no dataset");
+
+      const pessoas = JSON.parse(dadosBrutos);
+      if (!Array.isArray(pessoas)) throw new Error("Dados não são um array");
 
       container.innerHTML = "";
 
-      // Processamento paralelo
-      const cards = await Promise.all(
-        pessoas.map(async (pessoa) => {
-          if (!pessoa?.nome) return null;
-
-          const imagem = await buscarImagemPessoa(pessoa.nome);
-          return criarCardPessoa(pessoa, imagem);
-        })
-      );
-
-      cards.forEach((card) => card && container.appendChild(card));
+      for (const pessoa of pessoas) {
+        const imgURL = await buscarImagemPessoa(pessoa.nome);
+        container.appendChild(criarCardPessoa(pessoa, imgURL));
+      }
     } catch (error) {
-      console.error(`Erro em ${categoria}:`, error);
+      console.error(`Erro ao processar ${nome}:`, error);
+      console.error("Dados brutos:", container?.dataset[nome]);
     }
   }
 }
-
 // ========== 🎬 INICIALIZAÇÃO ==========
 document.addEventListener("DOMContentLoaded", () => {
   carregarPessoasDoBanco();

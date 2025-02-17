@@ -5,21 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Produtores</title>
     <link rel="stylesheet" href="/css/style.css" />
-    <script src="/js/script.js"></script>
+    <script defer src="/js/script.js"></script>
+    <!-- Corrigido atributo defer -->
     <style>
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .filmes-lista {
+        margin-top: 15px;
+        padding-left: 20px;
+        text-align: left;
+      }
+      .filmes-lista li {
+        margin: 5px 0;
+        color: #666;
+      }
       .card-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
         padding: 20px;
       }
       .card {
         background: #fff;
-        border-radius: 8px;
-        padding: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        text-align: center;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
       }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .filmes-lista {
+        margin-top: 15px;
+        padding-left: 20px;
+        text-align: left;
+      }
+      .filmes-lista li {
+        margin: 5px 0;
+        color: #666;
+      }
+
       .card h2 {
         margin: 10px 0;
       }
@@ -30,16 +56,31 @@
       .card .actions {
         margin-top: 10px;
       }
-      .card .actions a,
+      .card .actions a {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-color);
+        color: #fff;
+        font-size: 18px;
+        font-weight: light;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-top: 15px;
+        font-family: "Broadway", sans-serif;
+      }
       .card .actions button {
         text-decoration: none;
         color: white;
-        background: #007bff;
+        background: #dc3545;
         padding: 5px 10px;
         border-radius: 5px;
         margin: 5px;
         display: inline-block;
       }
+      .card .actions a,
       .card .actions button {
         background: #dc3545;
         border: none;
@@ -49,36 +90,64 @@
   </head>
   <body>
     <%- include('partials/header') %>
-    <main class="container">
-    <h1>Lista de Produtores</h1>
-    <a href="/pessoas/novo" class="btn"> Adicionar Novo Produtor</a>
 
-    <div class="card-grid">
-      <% produtores.forEach(produtor => { %>
-      <div class="card">
-        <h2><%= produtor.nome %></h2>
-        <div class="person-photo">
-          <img src="<%= produtor.imagem || '/images/default-person.jpg' %>" alt="Foto de <%= produtor.nome %>">
+    <main class="container">
+      <h1>Lista de Produtores</h1>
+      <a href="/pessoas/novo" class="btn">Adicionar Novo Produtor</a>
+
+      <div
+        id="produtor-container"
+        class="card-grid"
+        data-produtor="<%= JSON.stringify(produtores) %>"
+      >
+        <% produtores.forEach(produtor => { %>
+        <div class="card">
+          <div class="person-photo">
+            <img
+              src="<%= produtor.imagem || '/images/default-person.jpg' %>"
+              alt="Foto de <%= produtor.nome %>"
+              class="profile-img"
+            />
+          </div>
+
+          <h2><%= produtor.nome %></h2>
+
+          <div class="detalhes-pessoa">
+            <p>
+              <strong>Nascimento:</strong> <%= new
+              Date(produtor.data_nascimento).toLocaleDateString('pt-BR') %>
+            </p>
+            <p><strong>Sexo:</strong> <%= produtor.sexo %></p>
+            <p><strong>Nacionalidade:</strong> <%= produtor.nacionalidade %></p>
+
+            <% if (produtor.filmes && produtor.filmes.length > 0) { %>
+            <div class="filmes-lista">
+              <strong>Filmes Produzidos:</strong>
+              <ul>
+                <% produtor.filmes.forEach(filme => { %>
+                <li>
+                  <%= filme.titulo %> <% if (filme.ano_lancamento) { %> (<%=
+                  filme.ano_lancamento %>) <% } %>
+                </li>
+                <% }); %>
+              </ul>
+            </div>
+            <% } %>
+          </div>
+
+          <div class="actions">
+            <a href="/pessoas/editar/<%= produtor.id %>" class="btn-editar"
+              >Editar</a
+            >
+            <form action="/pessoas/deletar/<%= produtor.id %>" method="POST">
+              <button type="submit" class="btn-excluir">Excluir</button>
+            </form>
+          </div>
         </div>
-        <p>
-          <strong>Data de Nascimento:</strong> <%= produtor.data_nascimento %>
-        </p>
-        <p><strong>Sexo:</strong> <%= produtor.sexo %></p>
-        <p><strong>Nacionalidade:</strong> <%= produtor.nacionalidade %></p>
-        <div class="actions">
-          <a href="/pessoas/editar/<%= produtor.id %>">Editar</a>
-          <form
-            action="/pessoas/deletar/<%= produtor.id %>"
-            method="POST"
-            style="display: inline"
-          >
-            <button type="submit">Deletar</button>
-          </form>
-        </div>
+        <% }); %>
       </div>
-      <% }); %>
-    </div>
     </main>
+
     <%- include('partials/toggle') %>
   </body>
 </html>

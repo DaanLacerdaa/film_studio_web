@@ -47,7 +47,7 @@ Producao.beforeValidate(async (producao) => {
   const pessoa = await Pessoa.findByPk(producao.produtorId);
   if (!pessoa || pessoa.tipo !== "PRODUTOR") {
     throw new Error(
-      "A pessoa deve ser um PRODUTOR para ser vinculada a uma produção."
+      "O produtor_id deve pertencer a uma pessoa com tipo 'PRODUTOR'."
     );
   }
 });

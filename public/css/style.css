@@ -913,3 +913,28 @@ h1 {
 .cinema-mode .icon {
   color: #ff5733;
 }
+
+/* No <style> da página de filmes */
+.card-pessoa {
+  all: inherit; /* Herda estilos da classe .card */
+}
+
+.profile-img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.detalhes-pessoa {
+  padding: 15px;
+}
+
+.btn-editar {
+  background-color: #007bff !important;
+}
+
+.btn-excluir {
+  background-color: #dc3545 !important;
+}
