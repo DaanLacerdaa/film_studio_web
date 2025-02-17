@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
       include: [
         {
           model: Pessoa,
-          as: "diretor",
+          as: "diretores",
           attributes: ["nome"],
         },
         {

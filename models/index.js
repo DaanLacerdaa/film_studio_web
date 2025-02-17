@@ -4,14 +4,19 @@ const Filme = require("./Filme");
 const Atuacao = require("./atuacao");
 const Producao = require("./producao");
 
-// Relacionamento Diretor - Filme
-Pessoa.hasMany(Filme, {
-  foreignKey: "diretor_id",
-  as: "filmes_dirigidos",
-  scope: { tipo: "DIRETOR" },
+Filme.belongsToMany(Pessoa, {
+  through: "direcao", // Nome da tabela intermediária
+  as: "diretores",
+  foreignKey: "filme_id",
+  otherKey: "diretor_id",
 });
-Filme.belongsTo(Pessoa, { foreignKey: "diretor_id", as: "diretor" });
 
+Pessoa.belongsToMany(Filme, {
+  through: "direcao",
+  as: "filmesDirigidos",
+  foreignKey: "diretor_id",
+  otherKey: "filme_id",
+});
 // Relacionamento Ator - Filme (N:N)
 Filme.belongsToMany(Pessoa, {
   through: Atuacao,
