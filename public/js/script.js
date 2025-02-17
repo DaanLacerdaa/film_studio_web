@@ -585,3 +585,8 @@ function iniciarAnimacoes() {
     observer.observe(element);
   });
 }
+
+function showCard(cardId) {
+  document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+  document.getElementById(cardId).classList.remove('hidden');
+}
