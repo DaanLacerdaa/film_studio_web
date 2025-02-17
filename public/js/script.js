@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // ========== 🌐 CONFIGURAÇÕES GLOBAIS ==========
 const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
+const apiKeyOMDB = "ea8906de";
 const defaultImage = "/images/default-person.jpg"; // ← Adicionar aqui
 const defaultMovieImage = "/images/default-movie.jpg";
 
@@ -26,83 +27,150 @@ async function carregarFilmesDoBanco() {
 
   try {
     const filmes = JSON.parse(container.dataset.filmes);
-    container.innerHTML = "";
 
-    for (const filme of filmes) {
-      const filmeDadosExternos = await buscarFilme(filme.titulo);
+    // 🔄 Transição suave antes de remover os antigos
+    gsap.to(container.children, {
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.4,
+      stagger: 0.1,
+      onComplete: () => {
+        container.innerHTML = ""; // Só remove após a animação
+      },
+    });
+
+    const novosCards = [];
+
+    for (const filme of filmes.slice(0, 9)) {
+      // 🔥 Exibe no máximo 9 filmes
+      const filmeDadosExternos = await buscarFilme(
+        filme.titulo,
+        filme.ano_lancamento
+      );
 
       const card = document.createElement("div");
       card.classList.add("card");
 
+      let slides = "";
+      if (filmeDadosExternos?.backdropPaths?.length) {
+        slides = filmeDadosExternos.backdropPaths
+          .map(
+            (img) => `
+          <div class="swiper-slide">
+            <img src="https://image.tmdb.org/t/p/w780${img}" class="backdrop-img" alt="Cena de ${filme.titulo}">
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      const sinopse = filmeDadosExternos?.sinopse || "Sinopse não disponível.";
+      const sinopseCurta =
+        sinopse.length > 150 ? sinopse.substring(0, 150) + "..." : sinopse;
+
       card.innerHTML = `
         <h2>${filme.titulo} (${filme.ano_lancamento})</h2>
+
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            ${
+              slides ||
+              `<div class="swiper-slide"><img src="/images/default-movie.jpg" class="backdrop-img"></div>`
+            }
+          </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+        </div>
+
         <p><strong>Duração:</strong> ${filme.duracao || "N/A"} min</p>
         <p><strong>Idioma:</strong> ${filme.idioma || "Desconhecido"}</p>
         <p><strong>Gênero:</strong> ${filme.genero || "Desconhecido"}</p>
-        <p><strong>Diretor:</strong> ${
-          filme.diretor?.nome || "Desconhecido"
-        }</p>
-        <p><strong>Produtores:</strong> ${
-          Array.isArray(filme.produtores) && filme.produtores.length > 0
-            ? filme.produtores.map((p) => p.nome).join(", ")
-            : "Nenhum"
-        }</p>
-        <p><strong>Atores Principais:</strong> ${
-          Array.isArray(filme.elenco) && filme.elenco.length > 0
-            ? filme.elenco
-                .filter((a) => a.Atuacao?.is_principal)
-                .map((a) => a.nome)
-                .join(", ")
-            : "Nenhum"
-        }</p>
-        <p><strong>Título Original:</strong> ${
-          filmeDadosExternos?.tituloOriginal || "N/A"
-        }</p>
         <p><strong>Nota IMDb:</strong> ${
           filmeDadosExternos?.imdbRating || "N/A"
         }</p>
-        <p><strong>Rotten Tomatoes:</strong> ${
-          filmeDadosExternos?.rottenTomatoes || "N/A"
-        }</p>
-        <p><strong>Sinopse:</strong> ${
-          filmeDadosExternos?.sinopse || "Não disponível"
-        }</p>
+
+        <p class="sinopse">
+          <strong>Sinopse:</strong> <span class="sinopse-curta">${sinopseCurta}</span>
+          <span class="sinopse-completa" style="display: none;">${sinopse}</span>
+          ${
+            sinopse.length > 150
+              ? '<button class="leia-mais">Leia mais</button>'
+              : ""
+          }
+        </p>
 
         <div class="movie-cover">
           <img src="${
             filmeDadosExternos?.posterPath || "/images/default-movie.jpg"
           }" class="movie-poster" alt="Poster de ${filme.titulo}">
         </div>
+
         <div class="actions">
           <a href="/filmes/editar/${filme.id}">Editar</a>
-          <form 
-            action="/filmes/deletar/${filme.id}" 
-            method="POST" 
-            class="delete-form"
-          >
+          <form action="/filmes/deletar/${
+            filme.id
+          }" method="POST" class="delete-form">
             <button type="submit">Deletar</button>
           </form>
         </div>
       `;
 
-      container.appendChild(card);
+      novosCards.push(card);
     }
+
+    novosCards.forEach((card) => container.appendChild(card));
+
+    // Transição suave de entrada dos novos cards
+    gsap.from(novosCards, {
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.5,
+      stagger: 0.1,
+    });
+
+    iniciarCarrossel();
   } catch (error) {
     console.error("Erro ao carregar filmes:", error);
+    alert("Ocorreu um erro ao carregar os filmes. Tente novamente.");
   }
 }
 
-// ========== 🌐 FUNÇÕES DE API ==========
-async function buscarFilme(titulo) {
-  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294";
-  const apiKeyOMDB = "ea8906de";
+// 🔄 Função para iniciar os carrosséis Swiper
 
+function iniciarCarrossel() {
+  if (window.mySwiper) {
+    window.mySwiper.destroy(true, true); // Destroi a instância anterior
+  }
+
+  setTimeout(() => {
+    // Aguarda um pequeno delay para evitar conflitos visuais
+    window.mySwiper = new Swiper(".mySwiper", {
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
+  }, 100);
+}
+
+// ========== 🌐 FUNÇÕES DE API ==========
+async function buscarFilme(titulo, ano) {
   try {
-    // Primeira busca no TMDB
+    // Busca no TMDB
     const responseTMDB = await fetch(
       `https://api.themoviedb.org/3/search/movie?api_key=${apiKeyTMDB}&query=${encodeURIComponent(
         titulo
-      )}&language=pt-BR`
+      )}&year=${ano}&language=pt-BR`
     );
 
     const dataTMDB = await responseTMDB.json();
@@ -110,11 +178,19 @@ async function buscarFilme(titulo) {
 
     const filmeTMDB = dataTMDB.results[0];
 
+    // Busca backdrop_path (cenas do filme)
+    const detalhesFilmeTMDB = await fetch(
+      `https://api.themoviedb.org/3/movie/${filmeTMDB.id}/images?api_key=${apiKeyTMDB}`
+    ).then((res) => res.json());
+
+    const backdrops =
+      detalhesFilmeTMDB.backdrops?.map((b) => b.file_path).slice(0, 5) || [];
+
     // Busca complementar no OMDB
     const responseOMDB = await fetch(
       `https://www.omdbapi.com/?t=${encodeURIComponent(
         filmeTMDB.original_title
-      )}&apikey=${apiKeyOMDB}`
+      )}&y=${ano}&apikey=${apiKeyOMDB}`
     );
 
     const dataOMDB = await responseOMDB.json();
@@ -129,15 +205,16 @@ async function buscarFilme(titulo) {
         dataOMDB.Ratings?.find((r) => r.Source === "Rotten Tomatoes")?.Value ||
         "N/A",
       sinopse: filmeTMDB.overview || dataOMDB.Plot || "Sinopse não disponível.",
+      backdropPaths: backdrops,
     };
   } catch (error) {
     console.error("Erro na busca de filme:", error);
     return null;
   }
 }
+
 // ========== 🌐 FUNÇÕES DE API ==========
 async function buscarImagemPessoa(nome) {
-  const apiKeyTMDB = "50c08b07f173158a7370068b082b9294"; // Adicionar chave
   const defaultImage = "/images/default-person.jpg"; // Definir fallback
   const baseURL = "https://api.themoviedb.org/3/search/person";
   const query = nome
@@ -159,6 +236,12 @@ async function buscarImagemPessoa(nome) {
     return perfil ? `https://image.tmdb.org/t/p/w500${perfil}` : defaultImage;
   } catch (error) {
     console.error(`Falha na busca por ${nome}:`, error);
+    if (!response.ok) {
+      console.warn(
+        `Falha na requisição TMDB (${response.status}): ${response.statusText}`
+      );
+      return defaultImage;
+    }
     return defaultImage;
   }
 }
@@ -324,12 +407,6 @@ function gerarDetalhesFilmes(pessoa) {
     </details>
   `;
 }
-
-// Atualizar o DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-  carregarFilmesDoBanco();
-  carregarPessoasDoBanco();
-});
 
 // ========== 🖼️ FUNÇÕES DE POPUP ==========
 function configurarPopups() {

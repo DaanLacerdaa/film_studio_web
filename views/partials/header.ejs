@@ -7,7 +7,17 @@
       <%= typeof title !== 'undefined' ? title : 'Estúdio de Filmes' %>
     </title>
     <link rel="stylesheet" href="/css/style.css" />
-    <script src="/js/script.js" defer></script>
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script defer src="/js/script.js"></script>
   </head>
   <body>
     <nav>
@@ -15,8 +25,8 @@
         <li>
           <a href="/filmes">Filmes</a>
           <ul class="submenu">
-        <li><a href="/filmes/novo">Novo Filme</a></li>
-        </ul>
+            <li><a href="/filmes/novo">Novo Filme</a></li>
+          </ul>
         </li>
         <li>
           <a href="/pessoas/atores">Atores</a>
