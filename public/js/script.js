@@ -96,7 +96,7 @@ async function carregarFilmesDoBanco() {
         </div>
 
         <div class="actions">
-          <a href="/filmes/editar/${filme.id}">Editar</a>
+          <a href="/filmes/editar/${filme.id}"class = "btn-editar" >Editar</a>
           <form action="/filmes/deletar/${
             filme.id
           }" method="POST" class="delete-form">
@@ -278,7 +278,7 @@ function criarCardPessoa(pessoa, imagemURL) {
       ${filmesHTML}
     </div>
     <div class="actions">
-      <a href="/pessoas/editar/${pessoa.id}" class="btn">Editar</a>
+      <a href="/pessoas/editar/${pessoa.id}" class="btn-editar">Editar</a>
       <form action="/pessoas/deletar/${pessoa.id}" method="POST">
         <button type="submit" class="btn-excluir">Excluir</button>
       </form>
@@ -359,7 +359,6 @@ function atualizarLista(pessoas) {
   // Criar cards para os resultados filtrados
   pessoas.forEach(async (pessoa) => {
     const imagem = await buscarImagemPessoa(pessoa.nome);
-    container.appendChild(criarCardPessoa(pessoa, imagem));
   });
 }
 function criarCardFilme(filme, imagem) {
@@ -455,9 +454,17 @@ function posicionarPopup(popup, target) {
 // ========== 🛠 FUNÇÕES UTILITÁRIAS ==========
 
 // Função para aplicar o tema salvo no localStorage
+// Função para aplicar o tema salvo no localStorage
 function aplicarTema() {
   const temaSalvo = localStorage.getItem("tema") || "dark";
   document.documentElement.setAttribute("data-theme", temaSalvo);
+
+  // Atualizar os elementos que usam variáveis CSS
+  document.querySelectorAll(".menu a").forEach((link) => {
+    link.style.color = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue("--menu-color-text");
+  });
 
   // Atualizar o estado do checkbox
   const toggleBtn = document.getElementById("tema-toggle");
@@ -477,11 +484,11 @@ function configurarToggleTema() {
       document.documentElement.setAttribute("data-theme", novoTema);
       localStorage.setItem("tema", novoTema);
 
-      // Forçar re-render dos elementos
-      document.querySelectorAll(".card").forEach((card) => {
-        card.style.display = "none";
-        card.offsetHeight; // Força reflow
-        card.style.display = "block";
+      // Atualizar os elementos do menu após a troca de tema
+      document.querySelectorAll(".menu a").forEach((link) => {
+        link.style.color = getComputedStyle(
+          document.documentElement
+        ).getPropertyValue("--menu-color-text");
       });
     });
   }

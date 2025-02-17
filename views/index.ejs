@@ -9,10 +9,11 @@
       body {
         margin: 0;
         padding: 0;
-        font-family: Arial, sans-serif;
-        background: url('/images/poster-bg.jpg') center/cover no-repeat fixed;
+        font-family: Cinematografica, sans-serif;
+        background: url("/images/poster-bg.jpg") center/cover no-repeat fixed;
         color: white;
         text-align: center;
+        z-index: 10;
       }
       .overlay {
         position: absolute;
@@ -21,6 +22,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.6);
+        z-index: 1;
       }
       .hero {
         position: relative;
@@ -29,7 +31,7 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        z-index: 2;
+        z-index: 10;
       }
       .hero h1 {
         font-size: 3rem;
@@ -61,7 +63,10 @@
     <%- include('partials/header') %>
     <main class="hero">
       <h1>Bem-vindo ao Estúdio de Produção de Filmes</h1>
-      <h2>Explore o mundo do cinema com produções inesquecíveis e histórias emocionantes.</h2>
+      <h2>
+        Explore o mundo do cinema com produções inesquecíveis e histórias
+        emocionantes.
+      </h2>
       <a href="/filmes" class="cta-button">Conheça Nossos Filmes</a>
     </main>
     <%- include('partials/toggle') %>
