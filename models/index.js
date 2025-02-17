@@ -3,6 +3,7 @@ const Pessoa = require("./pessoa");
 const Filme = require("./Filme");
 const Atuacao = require("./atuacao");
 const Producao = require("./producao");
+const Direcao = require("./direcao");
 
 Filme.belongsToMany(Pessoa, {
   through: "direcao", // Nome da tabela intermediária
@@ -36,7 +37,7 @@ Pessoa.belongsToMany(Filme, {
 Filme.belongsToMany(Pessoa, {
   through: Producao,
   foreignKey: "filme_id",
-  otherKey: "produtorId",
+  otherKey: "pessoa_id",
   as: "produtores",
 });
 Pessoa.belongsToMany(Filme, {
@@ -59,4 +60,4 @@ sequelize
   .then(() => console.log("✅ Banco de dados sincronizado"))
   .catch((err) => console.error("❌ Erro ao sincronizar:", err));
 
-module.exports = { sequelize, Pessoa, Filme, Atuacao, Producao };
+module.exports = { sequelize, Pessoa, Filme, Atuacao, Producao, Direcao };

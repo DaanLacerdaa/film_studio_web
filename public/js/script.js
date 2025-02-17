@@ -28,21 +28,20 @@ async function carregarFilmesDoBanco() {
   try {
     const filmes = JSON.parse(container.dataset.filmes);
 
-    // 🔄 Transição suave antes de remover os antigos
+    // 🔄 Remove apenas os elementos antigos de forma animada antes de adicionar novos
     gsap.to(container.children, {
       opacity: 0,
-      scale: 0.9,
-      duration: 0.4,
+      y: -20,
+      duration: 0.5,
       stagger: 0.1,
       onComplete: () => {
-        container.innerHTML = ""; // Só remove após a animação
+        container.innerHTML = ""; // Remove os elementos após animação
       },
     });
 
     const novosCards = [];
 
-    for (const filme of filmes.slice(0, 9)) {
-      // 🔥 Exibe no máximo 9 filmes
+    for (const filme of filmes) {
       const filmeDadosExternos = await buscarFilme(
         filme.titulo,
         filme.ano_lancamento
@@ -119,17 +118,35 @@ async function carregarFilmesDoBanco() {
       novosCards.push(card);
     }
 
+    // Adiciona os novos elementos ao container
     novosCards.forEach((card) => container.appendChild(card));
 
-    // Transição suave de entrada dos novos cards
+    // ✨ Aplica animação nos novos elementos
     gsap.from(novosCards, {
       opacity: 0,
-      scale: 0.9,
+      y: 20,
       duration: 0.5,
       stagger: 0.1,
     });
 
+    // Inicializa os carrosséis Swiper após a inserção dos filmes
     iniciarCarrossel();
+
+    document.querySelectorAll(".leia-mais").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const sinopseCurta = this.previousElementSibling.previousElementSibling;
+        const sinopseCompleta = this.previousElementSibling;
+        if (sinopseCompleta.style.display === "none") {
+          sinopseCompleta.style.display = "inline";
+          sinopseCurta.style.display = "none";
+          this.textContent = "Leia menos";
+        } else {
+          sinopseCompleta.style.display = "none";
+          sinopseCurta.style.display = "inline";
+          this.textContent = "Leia mais";
+        }
+      });
+    });
   } catch (error) {
     console.error("Erro ao carregar filmes:", error);
     alert("Ocorreu um erro ao carregar os filmes. Tente novamente.");

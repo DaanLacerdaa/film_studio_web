@@ -22,6 +22,7 @@ router.get("/", async (req, res) => {
           model: Pessoa,
           as: "diretores",
           attributes: ["nome"],
+          through: { model: Direcao, attributes: [] },
         },
         {
           model: Pessoa,
@@ -107,7 +108,7 @@ router.get("/editar/:id", async (req, res) => {
         },
         {
           model: Pessoa,
-          as: "diretor",
+          as: "diretores",
           attributes: ["id", "nome"],
         },
       ],
