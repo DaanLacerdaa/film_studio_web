@@ -111,6 +111,7 @@ router.get("/editar/:id", async (req, res) => {
           model: Pessoa,
           as: "diretores",
           attributes: ["id", "nome"],
+          through: { model: Direcao, attributes: [] },
         },
       ],
     });

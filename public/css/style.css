@@ -1,7 +1,7 @@
 /* Fontes customizadas */
 @font-face {
   font-family: "Cinema";
-  src: url("../../fonts/Cinema.ttf") format("truetype");
+  src: url("../../fonts/Cinematografica.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -22,6 +22,7 @@
   --table-bg: #2a2a2a;
   --table-header: #e50914;
   --form-bg: #2a2a2a;
+  --btn-bg:#2a2a2a;
   --input-bg: #1a1a1a;
   --border-color: #444;
   --nav-bg: rgba(51, 51, 51, 0.9);
@@ -36,6 +37,7 @@
   --table-bg: #ffffff;
   --table-header: #e50914;
   --form-bg: #ffffff;
+  --btn-bg: #ffffff
   --input-bg: #f5f5f5;
   --border-color: #ddd;
   --nav-bg: rgba(245, 245, 245, 0.9);
@@ -411,34 +413,38 @@ nav {
 /* Botões */
 .btn-primary {
   display: inline-block;
-  background: var(--primary-color);
+  background: #dc3545; /* Vermelho */
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   margin: 1rem 0;
   transition: background-color 0.3s ease;
+  text-align: center;
+  text-decoration: none;
+  font-family: "Broadway", sans-serif;
 }
-.btn {
-  display: inline-block;
-  background: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  margin: 1rem 0;
-  transition: background-color 0.3s ease;
-}
+
 .btn-primary:hover {
-  background: var(--hover-color);
+  background: #b20710; /* Vermelho mais escuro no hover */
 }
+
 .btn {
+  display: block;
   background: #dc3545; /* Vermelho */
   color: white;
   border: none;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 5px;
-  font-size: 16px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 18px;
   transition: background 0.3s ease;
+  text-align: center;
+  text-decoration: none;
+  font-family: "Broadway", sans-serif;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
 }
 
 .btn:hover {
@@ -513,21 +519,29 @@ nav {
 }
 
 /* Botões de ação */
-.actions a {
-  background: var(--primary-color);
-  color: white !important;
-  border: 1px solid var(--hover-color);
-}
-.actions btn {
-  background: var(--primary-color);
-  color: white !important;
-  border: 1px solid var(--hover-color);
+/* Botões de ação */
+.actions a,
+.actions button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: #fff;
+  font-size: 18px;
+  font-weight: light;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 15px;
+  font-family: "Broadway", sans-serif;
 }
 
-.actions button {
-  background: var(--card-bg);
-  color: var(--card-text);
-  border: 1px solid var(--card-border);
+/* Hover para links e botões */
+.actions a:hover,
+.actions button:hover {
+  background-color: var(--hover-color);
+  
 }
 
 /* Adicione ao CSS */
@@ -576,13 +590,14 @@ label {
 input,
 select {
   width: 100%;
-  padding: 10px;
-  margin-top: 5px;
+  max-width: 100%;
+  padding: 8px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
   background-color: var(--input-bg);
   color: var(--text-color);
-  font-size: 16px;
+  font-size: 15px;
+  box-sizing: border-box; /* Evita que padding/border ultrapassem o container */
 }
 
 button {
@@ -622,7 +637,7 @@ select[multiple] {
 /* Títulos estilizados */
 h1 {
   text-align: center;
-  font-family: "Cinema", serif;
+  font-family: "Broadway", serif;
   color: var(--primary-color);
 }
 
@@ -643,7 +658,14 @@ h1 {
 }
 
 .btn-editar {
-  background-color: #007bff !important;
+  background-color: #dc3545 !important;
+  background-color: var(--btn-bg);
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
 }
 
 .btn-excluir {
@@ -664,7 +686,7 @@ h1 {
 
 .swiper-button-next,
 .swiper-button-prev {
-  color: white;
+  color: rgb(214, 6, 6);
 }
 
 .sinopse button {
@@ -735,26 +757,6 @@ h1 {
   font-weight: bold;
 }
 
-/* Swiper Estilização */
-.swiper {
-  width: 100%;
-  height: 200px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.swiper-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Botões de navegação do Swiper */
-.swiper-button-next,
-.swiper-button-prev {
-  color: white;
-}
-
 /* Responsividade */
 @media (max-width: 768px) {
   #filmes-container {
@@ -781,5 +783,39 @@ h1 {
 
   .card p {
     font-size: 0.9rem;
+  }
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Distribui os cards igualmente */
+  gap: 10px; /* Espaçamento entre os cards */
+}
+
+.card {
+  flex: 1 1 calc(50% - 5px); /* Cada card ocupa 1/3 da largura, considerando espaçamento */
+  max-width: calc(50% - 5px); /* Garante que não ultrapasse 3 cards por linha */
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 900px) {
+  .card {
+    flex: 1 1 calc(50% - 16px); /* 2 cards por linha */
+    max-width: calc(50% - 16px);
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    flex: 1 1 100%; /* 1 card por linha */
+    max-width: 100%;
   }
 }

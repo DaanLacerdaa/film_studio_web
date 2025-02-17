@@ -30,14 +30,6 @@ Filme.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    diretor_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "pessoa",
-        key: "id",
-      },
-    },
   },
   {
     sequelize, // Certifique-se de que está recebendo corretamente o Sequelize

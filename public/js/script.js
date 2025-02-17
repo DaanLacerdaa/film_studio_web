@@ -27,19 +27,7 @@ async function carregarFilmesDoBanco() {
 
   try {
     const filmes = JSON.parse(container.dataset.filmes);
-
-    // 🔄 Remove apenas os elementos antigos de forma animada antes de adicionar novos
-    gsap.to(container.children, {
-      opacity: 0,
-      y: -20,
-      duration: 0.5,
-      stagger: 0.1,
-      onComplete: () => {
-        container.innerHTML = ""; // Remove os elementos após animação
-      },
-    });
-
-    const novosCards = [];
+    container.innerHTML = "";
 
     for (const filme of filmes) {
       const filmeDadosExternos = await buscarFilme(
@@ -50,6 +38,7 @@ async function carregarFilmesDoBanco() {
       const card = document.createElement("div");
       card.classList.add("card");
 
+      // Construção do carrossel de imagens do filme
       let slides = "";
       if (filmeDadosExternos?.backdropPaths?.length) {
         slides = filmeDadosExternos.backdropPaths
@@ -63,6 +52,7 @@ async function carregarFilmesDoBanco() {
           .join("");
       }
 
+      // Sinopse curta e botão "Leia mais"
       const sinopse = filmeDadosExternos?.sinopse || "Sinopse não disponível.";
       const sinopseCurta =
         sinopse.length > 150 ? sinopse.substring(0, 150) + "..." : sinopse;
@@ -115,23 +105,13 @@ async function carregarFilmesDoBanco() {
         </div>
       `;
 
-      novosCards.push(card);
+      container.appendChild(card);
     }
-
-    // Adiciona os novos elementos ao container
-    novosCards.forEach((card) => container.appendChild(card));
-
-    // ✨ Aplica animação nos novos elementos
-    gsap.from(novosCards, {
-      opacity: 0,
-      y: 20,
-      duration: 0.5,
-      stagger: 0.1,
-    });
 
     // Inicializa os carrosséis Swiper após a inserção dos filmes
     iniciarCarrossel();
 
+    // Adiciona eventos aos botões "Leia mais"
     document.querySelectorAll(".leia-mais").forEach((btn) => {
       btn.addEventListener("click", function () {
         const sinopseCurta = this.previousElementSibling.previousElementSibling;
@@ -156,28 +136,27 @@ async function carregarFilmesDoBanco() {
 // 🔄 Função para iniciar os carrosséis Swiper
 
 function iniciarCarrossel() {
+  // Verifica se já existe uma instância do Swiper
   if (window.mySwiper) {
     window.mySwiper.destroy(true, true); // Destroi a instância anterior
   }
 
-  setTimeout(() => {
-    // Aguarda um pequeno delay para evitar conflitos visuais
-    window.mySwiper = new Swiper(".mySwiper", {
-      loop: true,
-      autoplay: {
-        delay: 3000,
-        disableOnInteraction: false,
-      },
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
-  }, 100);
+  // Cria uma nova instância do Swiper e armazena globalmente
+  window.mySwiper = new Swiper(".mySwiper", {
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
 }
 
 // ========== 🌐 FUNÇÕES DE API ==========
@@ -299,7 +278,7 @@ function criarCardPessoa(pessoa, imagemURL) {
       ${filmesHTML}
     </div>
     <div class="actions">
-      <a href="/pessoas/editar/${pessoa.id}" class="btn-editar">Editar</a>
+      <a href="/pessoas/editar/${pessoa.id}" class="btn">Editar</a>
       <form action="/pessoas/deletar/${pessoa.id}" method="POST">
         <button type="submit" class="btn-excluir">Excluir</button>
       </form>
