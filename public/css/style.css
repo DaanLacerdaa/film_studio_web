@@ -29,7 +29,7 @@ h1,
 h2 {
   text-align: center;
   margin: 20px 0;
-  font-family: "Cinematografica", serif;
+  font-family: "Broadway", serif;
   color: var(--primary-color);
 }
 /* ========== TOGGLE CINEMATOGRÁFICO ========== */
@@ -239,7 +239,7 @@ form {
 /* ================= CINEMATIC MENU ================= */
 body {
   background: var(--menu-color);
-  font-family: "Cinematografica", sans-serif;
+  font-family: "Broadway", sans-serif;
   color: var(--menu-color-text);
   margin: 0;
   padding: 0;
@@ -710,43 +710,42 @@ h1 {
     font-size: 0.9rem;
   }
 }
-
 /* Definição de Tema Claro e Escuro */
 [data-theme="dark"] {
-  --menu-color: #f0f0f0;
-  --menu-color-text: #333333;
-  --bg-color: #1a1a1a;
+  --menu-color: #1a1a1a;
+  --menu-color-text: #f0f0f0;
+  --bg-color: #121212;
   --text-color: #f0f0f0;
   --primary-color: #e50914;
   --hover-color: #b20710;
-  --table-bg: #2a2a2a;
+  --table-bg: #1e1e1e;
   --table-header: #e50914;
-  --form-bg: #2a2a2a;
-  --input-bg: #1a1a1a;
+  --form-bg: #1e1e1e;
+  --input-bg: #222;
   --border-color: #444;
-  --nav-bg: rgba(51, 51, 51, 0.9);
-  --footer-bg: #121212;
-  --card-bg: #333; /* Fundo dos cards no tema escuro */
+  --nav-bg: rgba(34, 34, 34, 0.9);
+  --footer-bg: #181818;
+  --card-bg: #222; 
   --card-text: #ffffff;
   --card-border: #555;
 }
 
 [data-theme="light"] {
-  --menu-color: #333;
-  --menu-color-text: #ffffff;
-  --bg-color: #ebebeb;
-  --text-color: #333;
+  --menu-color: #ffffff;
+  --menu-color-text: #222222;
+  --bg-color: #f9f9f9;
+  --text-color: #222;
   --primary-color: #e50914;
   --hover-color: #b20710;
   --table-bg: #ffffff;
   --table-header: #e50914;
   --form-bg: #ffffff;
   --input-bg: #f5f5f5;
-  --border-color: #ddd;
-  --nav-bg: rgba(245, 245, 245, 0.9);
-  --footer-bg: #e0e0e0;
-  --card-bg: #ffffff; /* Fundo dos cards no tema claro */
-  --card-text: #333;
+  --border-color: #ccc;
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --footer-bg: #eaeaea;
+  --card-bg: #ffffff; 
+  --card-text: #222;
   --card-border: #ddd;
 }
 
@@ -779,7 +778,7 @@ h1 {
 /* Texto dentro do Card */
 .card p,
 .card strong {
-  color: var(--card-text); /* Usa cor do tema */
+  color: var(--menu-color-text); /* Usa cor do tema */
   font-size: 0.95rem;
   line-height: 1.4;
 }
