@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Cinema</title>
+    <title>Login</title>
     <link rel="stylesheet" href="/css/style.css">
     <script defer src="/js/script.js"></script>
 </head>
@@ -34,7 +34,13 @@
                 </form>
                 <p class="link" onclick="showCard('card-login')">Já tenho uma conta</p>
             </div>
-
+            <% if (mensagem) { %>
+              <div class="alert alert-success"><%= mensagem %></div>
+            <% } %>
+            <% if (erro) { %>
+              <div class="alert alert-danger"><%= erro %></div>
+            <% } %>
+            
             <!-- Card de Esqueci Minha Senha -->
             <div class="card hidden" id="card-forgot">
                 <h2>Recuperar Senha</h2>

@@ -370,7 +370,7 @@ body {
   position: relative;
   top: 35px;
   left: 0;
-  background: var(--nav-bg);
+  background: var(--menu-color-text);
   list-style: none;
   padding: 10px 0;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
@@ -401,7 +401,7 @@ body {
   position: absolute;
   top: 100%;
   left: 0;
-  background: var(--nav-bg);
+  background: var(--text-color);
   min-width: 150px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
   border-radius: 4px;
@@ -779,7 +779,7 @@ h1 {
 /* Texto dentro do Card */
 .card p,
 .card strong {
-  color: var(--text-color); /* Usa cor do tema */
+  color: var(--card-text); /* Usa cor do tema */
   font-size: 0.95rem;
   line-height: 1.4;
 }
@@ -861,8 +861,8 @@ h1 {
 }
 body {
   font-family: Broadway, sans-serif;
-  background: #111;
-  color: #fff;
+  background: var(--bg-color);
+  color: var(--text-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -883,7 +883,7 @@ body {
 }
 
 .card {
-  background: rgba(20, 20, 20, 0.9);
+  background: (var(--card-bg));
   padding: 20px;
   border-radius: 10px;
   text-align: center;

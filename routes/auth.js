@@ -13,40 +13,39 @@ function verificarAutenticacao(req, res, next) {
   req.flash("error", "Você precisa estar logado para acessar essa página.");
   res.redirect("/login");
 }
-
 // Página de login
 router.get("/login", (req, res) => {
-  res.render("login", { messages: req.flash("error") });
+  res.render("login", { erro: null });
 });
 
-// Processar login
+
+// Processamento do login
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
+    const usuario = await User.findOne({ where: { email } }); // Alterado de Pessoa para User
 
-    if (!email || !password) {
-      req.flash("error", "Preencha todos os campos.");
-      return res.redirect("/login");
+    if (!usuario || !(await bcrypt.compare(password, usuario.senha))) {
+      return res.status(401).render("login", { erro: "Credenciais inválidas" });
     }
 
-    const user = await User.findOne({ where: { email } });
+    req.session.user = {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+    };
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      req.flash("error", "E-mail ou senha inválidos.");
-      return res.redirect("/login");
-    }
-
-    // Armazena apenas dados seguros do usuário na sessão
-    req.session.user = { id: user.id, email: user.email, role: user.role };
-
-    req.flash("success", "Login realizado com sucesso!");
     res.redirect("/");
-  } catch (error) {
-    console.error("Erro ao fazer login:", error);
-    req.flash("error", "Ocorreu um erro ao tentar fazer login.");
+  } catch (err) {
+    console.error("Erro no login:", err);
+    res.status(500).render("login", { erro: "Erro ao processar login" });
+    req.flash("error", "Credenciais inválidas");
     res.redirect("/login");
+
   }
 });
+
 
 // Logout
 router.get("/logout", (req, res) => {
@@ -56,3 +55,4 @@ router.get("/logout", (req, res) => {
 });
 
 module.exports = router;
+

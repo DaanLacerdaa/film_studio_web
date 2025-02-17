@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Pessoa, Filme } = require("../models");
 
+
 // Função para formatar a data de nascimento
 function formatarData(data) {
   return data ? new Date(data).toLocaleDateString("pt-BR") : "N/A";
@@ -28,7 +29,11 @@ router.get("/pessoas", async (req, res) => {
       order: [["nome", "ASC"]],
     });
 
-    // Agrupar pessoas por tipo
+    if (!pessoas.length) {
+      return res.status(404).json({ mensagem: "Nenhuma pessoa encontrada" });
+    }
+
+    // Agrupar por tipo
     const groupedPeople = pessoas.reduce((acc, pessoa) => {
       const tipo = pessoa.tipo?.toLowerCase() || "outros";
       if (!acc[tipo]) acc[tipo] = [];
@@ -39,17 +44,13 @@ router.get("/pessoas", async (req, res) => {
       return acc;
     }, {});
 
-    console.log(
-      "Enviando JSON para a view:",
-      JSON.stringify(groupedPeople, null, 2)
-    );
-
-    res.json(groupedPeople); // Agora retorna um JSON para o frontend
+    res.json(groupedPeople);
   } catch (err) {
     console.error("Erro ao buscar pessoas:", err);
     res.status(500).json({ erro: "Erro ao carregar lista de pessoas" });
   }
 });
+
 
 // Listar filmes
 router.get("/filmes", async (req, res) => {
