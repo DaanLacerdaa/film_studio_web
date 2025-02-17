@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const authRoutes = require("./routes/auth");
+const authMiddleware = require("./middlewares/auth");
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -44,6 +47,31 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use(express.urlencoded({ extended: true }));
+require("dotenv").config();
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Usar as rotas de autenticação
+app.use(authRoutes);
+
+// Rota protegida
+app.get("/", authMiddleware, (req, res) => {
+  res.send(
+    `<h1>Bem-vindo, ${req.session.user.name}!</h1><a href="/logout">Sair</a>`
+  );
+});
+
+app.listen(3000, () => {
+  console.log("Servidor rodando em http://localhost:3000");
+});
+
 // Inicialização do servidor
 const PORT = 3001;
 app.listen(PORT, () => {

@@ -359,6 +359,7 @@ function atualizarLista(pessoas) {
   // Criar cards para os resultados filtrados
   pessoas.forEach(async (pessoa) => {
     const imagem = await buscarImagemPessoa(pessoa.nome);
+    container.appendChild(criarCardPessoa(pessoa, imagem));
   });
 }
 function criarCardFilme(filme, imagem) {
