@@ -13,6 +13,11 @@ app.use(express.urlencoded({ extended: true }));
 const filmesRoutes = require("./routes/filmes");
 const pessoasRoutes = require("./routes/pessoas"); // Rota unificada para atores, diretores e produtores
 
+app.use((req, res, next) => {
+  res.locals.session = req.session; // Permite acessar session nas views
+  next();
+});
+
 // Configuração do EJS para renderização de views
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

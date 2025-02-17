@@ -7,6 +7,13 @@ function formatarData(data) {
   return data ? new Date(data).toLocaleDateString("pt-BR") : "N/A";
 }
 
+router.get("/", (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  res.render("index");
+});
+
 // Rota unificada para listar pessoas
 router.get("/pessoas", async (req, res) => {
   try {
