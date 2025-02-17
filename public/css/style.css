@@ -1,17 +1,4 @@
-/* Fontes customizadas */
-@font-face {
-  font-family: "Cinema";
-  src: url("../../fonts/Cinematografica.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
 
-@font-face {
-  font-family: "Broadway";
-  src: url("../../fonts/Broadway.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
 
 /* Variáveis de tema */
 
@@ -41,8 +28,8 @@ h2 {
   height: 40px;
   border-radius: 40px;
   background: var(--bg-color);
-  border: 3px solid var(--primary-color);
-  box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
+  border: 3px solid var(--accent-color);
+  box-shadow: var(--neon-glow);
   transition: all 0.4s ease;
   cursor: pointer;
   z-index: 1000;
@@ -51,6 +38,7 @@ h2 {
   align-items: center;
   justify-content: flex-start;
   padding: 5px;
+
 }
 
 /* Esconder input checkbox */
@@ -87,6 +75,8 @@ h2 {
 
 #claquete::before {
   content: "🎬";
+  filter: drop-shadow(0 0 2px var(--accent-color));
+
 }
 
 /* FILME + ELEMENTOS TEMÁTICOS */
@@ -462,11 +452,31 @@ body {
 /* ========== CORREÇÕES NO TEMA ========== */
 /* Adicionar variáveis específicas para cards */
 :root {
+  /* Cores Base */
+  --primary-color: #e50914;    /* Vermelho cinematográfico */
+  --accent-color: #ffd700;     /* Dourado para destaques */
+  --hover-color: #b20710;      /* Vermelho mais escuro */
+  
+  /* Elementos UI */
   --card-bg: #2a2a2a;
   --card-text: #f0f0f0;
   --card-border: #444;
+  --popup-bg: rgba(0, 0, 0, 0.9);
+  
+  /* Tipografia */
+  --title-font: "Broadway", serif;
+  --body-font: "Goudy Bookletter 1911", sans-serif;
+  
+  /* Efeitos Visuais */
+  --neon-glow: 0 0 15px rgba(229, 9, 20, 0.4);
+  --film-strip: repeating-linear-gradient(
+    90deg,
+    var(--card-border) 0px,
+    var(--primary-color) 8px,
+    transparent 8px,
+    transparent 16px
+  );
 }
-
 /* Aplicar variáveis nos cards */
 
 /* Ajustar imagens nos cards */
@@ -836,7 +846,7 @@ h1 {
   flex: 1 1 calc(50% - 5px);
   max-width: calc(50% - 5px);
   background: var(--card-bg); /* Mantém a variação do tema */
-  padding: 16px;
+  padding: 10px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -872,7 +882,7 @@ body {
 .login-container {
   width: 100%;
   max-width: 400px;
-  padding: 20px;
+  padding: 10px;
 }
 
 .card-container {
@@ -883,7 +893,7 @@ body {
 
 .card {
   background: (var(--card-bg));
-  padding: 20px;
+  padding: 0px;
   border-radius: 10px;
   text-align: center;
   box-shadow: 0px 0px 10px #FFD700;

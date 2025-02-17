@@ -587,6 +587,6 @@ function iniciarAnimacoes() {
 }
 
 function showCard(cardId) {
-  document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+  document.querySelectorAll('.card-login').forEach(card => card.classList.add('hidden'));
   document.getElementById(cardId).classList.remove('hidden');
 }
