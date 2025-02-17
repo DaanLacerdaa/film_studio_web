@@ -1,25 +1,36 @@
+<!-- views/index.html -->
 <!DOCTYPE html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Estúdio de Filmes</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    <style>
-  
-    </style>
-  </head>
-  <body>
-    <div class="overlay"></div>
-    <%- include('partials/header') %>
-    <main class="hero">
+<html lang="pt-br" data-theme="dark"> <!-- Adicionado data-theme -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estúdio de Filmes</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('/images/poster-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.3);
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+  <main class="hero">
+    <div class="hero-content">
       <h1>Bem-vindo ao Estúdio de Produção de Filmes</h1>
-      <h2>
-        Explore o mundo do cinema com produções inesquecíveis e histórias
-        emocionantes.
-      </h2>
+      <h2>Explore o mundo do cinema com produções inesquecíveis e histórias emocionantes.</h2>
       <a href="/filmes" class="cta-button">Conheça Nossos Filmes</a>
-    </main>
-    <%- include('partials/toggle') %>
-  </body>
+    </div>
+  </main>
+  <%- include('partials/toggle') %>
+</body>
 </html>
