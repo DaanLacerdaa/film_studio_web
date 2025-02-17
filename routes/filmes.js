@@ -4,6 +4,7 @@ const Filme = require("../models/Filme");
 const Pessoa = require("../models/pessoa");
 const Atuacao = require("../models/atuacao");
 const Producao = require("../models/producao");
+const Direcao = require("../models/direcao");
 
 // Listar todos os filmes
 router.get("/", async (req, res) => {
