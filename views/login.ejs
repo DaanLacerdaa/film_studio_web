@@ -1,23 +1,164 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-  </head>
-  <body>
-    <h2>Login</h2>
-    <% if (error) { %>
-    <p style="color: red"><%= error %></p>
-    <% } %>
-    <form action="/login" method="POST">
-      <label for="email">E-mail:</label>
-      <input type="email" name="email" required />
-      <br />
-      <label for="password">Senha:</label>
-      <input type="password" name="password" required />
-      <br />
-      <button type="submit">Entrar</button>
-    </form>
-  </body>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script defer src="/js/script.js"></script>
+    <style>
+        
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Corleone, sans-serif;
+    background: url("/images/poster-bg.jpg") center/cover no-repeat fixed;
+    color: white;
+    text-align: center;
+    z-index: 10;
+  
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+button {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #ff0000;
+}
+
+.card {
+  display: none;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+.card.active {
+  display: block;
+}
+
+h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form button {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <div>
+            <button onclick="showCard('login')">Login</button>
+            <button onclick="showCard('register')">Registrar-se</button>
+            <button onclick="showCard('forgot')">Esqueci minha senha</button>
+        </div>
+        <%- include('partials/header') %>
+        <div id="login" class="card active">
+          <h2>Login</h2>
+      
+          <% if (typeof error !== "undefined" && error) { %>
+              <p style="color: red"><%= error %></p>
+          <% } %>
+      
+          <form action="/login" method="POST">
+              <label for="email">E-mail:</label>
+              <input type="email" name="email" required />
+              <br />
+              <label for="password">Senha:</label>
+              <input type="password" name="password" required />
+              <br />
+              <button type="submit">Entrar</button>
+          </form>
+      </div>
+      
+
+        <div id="register" class="card">
+            <h2>Registrar-se</h2>
+            <form action="/register" method="POST">
+                <label for="name">Nome:</label>
+                <input type="text" name="name" required />
+                <br />
+                <label for="email">E-mail:</label>
+                <input type="email" name="email" required />
+                <br />
+                <label for="password">Senha:</label>
+                <input type="password" name="password" required />
+                <br />
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+
+        <div id="forgot" class="card">
+            <h2>Esqueci minha senha</h2>
+            <form action="/forgot-password" method="POST">
+                <label for="email">E-mail:</label>
+                <input type="email" name="email" required />
+                <br />
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showCard(cardId) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.getElementById(cardId).classList.add('active');
+        }
+    </script>
+    <%- include('partials/toggle') %>
+</body>
 </html>

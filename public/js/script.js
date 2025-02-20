@@ -585,3 +585,21 @@ function iniciarAnimacoes() {
     observer.observe(element);
   });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const loginCard = document.getElementById("login-card");
+  const registerCard = document.getElementById("register-card");
+  const forgotCard = document.getElementById("forgot-card");
+  
+  function showCard(cardToShow) {
+    [loginCard, registerCard, forgotCard].forEach(card => {
+      card.style.display = card === cardToShow ? "block" : "none";
+    });
+  }
+  
+  document.getElementById("show-login").addEventListener("click", () => showCard(loginCard));
+  document.getElementById("show-register").addEventListener("click", () => showCard(registerCard));
+  document.getElementById("show-forgot").addEventListener("click", () => showCard(forgotCard));
+
+  showCard(loginCard); // Exibe o card de login por padrão
+});
